@@ -448,7 +448,15 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 </section>
 
 
-<!-- How it works -->
+<!-- Demo section -->
+<div class="demo-section">
+  <p class="section-eyebrow">See it in action</p>
+  <div class="demo-widget">
+    <div class="dw-chrome">
+      <div class="dw-dots"><span class="dd-r"></span><span class="dd-y"></span><span class="dd-g"></span></div>
+      <div class="dw-urlbar"><svg viewBox="0 0 11 11" fill="none"><path d="M5.5 1a4.5 4.5 0 100 9 4.5 4.5 0 000-9z" stroke="currentColor" stroke-width="1"/><path d="M3.5 5.5h4M5.5 3.5v4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>notion.so</div>
+      <div class="dw-pill"><span class="dw-pill-dot"></span>Analyzing…</div>
+    </div>
     <div class="dw-body">
       <div class="dw-preview">
         <div class="scan-beam"></div>
@@ -665,9 +673,9 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 
 <style>
 /* ── AUTH PAGES ── */
-.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column}
+.auth-page{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column;overflow-y:auto}
 .auth-page.show{display:flex}
-.onb-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column}
+.onb-page{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column;overflow-y:auto}
 .onb-page.show{display:flex}
 .auth-back{position:fixed;top:20px;left:24px;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);cursor:pointer;text-decoration:none;padding:8px 12px;border-radius:var(--r);transition:all 0.15s}
 .auth-back:hover{color:var(--text);background:var(--gray-200)}
@@ -691,7 +699,6 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 .auth-fine a{color:var(--cyan-dark);text-decoration:none;cursor:pointer}
 
 /* ── ONBOARDING ── */
-.onb-page.show{display:flex}
 .onb-card{width:100%;max-width:680px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-2xl);padding:44px;box-shadow:var(--shadow-xl)}
 .onb-progress{display:flex;align-items:center;gap:8px;margin-bottom:32px}
 .onb-step{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid var(--border);color:var(--gray-400);transition:all 0.2s}
@@ -1014,6 +1021,53 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 .sum-bar{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:16px 20px;margin-bottom:16px;font-size:14px;color:var(--gray-700);line-height:1.7;box-shadow:var(--shadow-sm)}
 .sum-bar strong{color:var(--navy-900);font-weight:600}
 
+/* ── INLINE CHAT PANEL ── */
+.chat-panel{
+  position:fixed;top:0;right:0;bottom:0;width:380px;
+  background:var(--navy-950);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform 0.28s cubic-bezier(.4,0,.2,1);
+  z-index:250;box-shadow:-8px 0 32px rgba(0,0,0,0.25);
+}
+.chat-panel.open{transform:translateX(0)}
+.chat-toggle{
+  position:fixed;bottom:28px;right:28px;z-index:249;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--navy-900);border:1.5px solid rgba(0,200,255,0.35);
+  box-shadow:0 4px 20px rgba(0,0,0,0.3),0 0 0 0 rgba(0,200,255,0.4);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;animation:chatPulse 3s ease-in-out infinite;
+}
+.chat-toggle:hover{transform:scale(1.08);border-color:var(--cyan)}
+.chat-toggle.panel-open{animation:none;background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.2)}
+@keyframes chatPulse{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,0.3),0 0 0 0 rgba(0,200,255,0.4)}60%{box-shadow:0 4px 20px rgba(0,0,0,0.3),0 0 0 10px rgba(0,200,255,0)}}
+.cp-head{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:10px;flex-shrink:0}
+.cp-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,255,156,0.15));border:1px solid rgba(0,200,255,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cp-title{font-size:14px;font-weight:600;color:white;letter-spacing:-0.2px}
+.cp-sub{font-size:11px;color:rgba(0,200,255,0.7);display:flex;align-items:center;gap:4px}
+.cp-close{margin-left:auto;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.3);padding:6px;border-radius:var(--r-sm);transition:all 0.15s;display:flex}
+.cp-close:hover{color:white;background:rgba(255,255,255,0.08)}
+.cp-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.08) transparent}
+.cp-bubble-wrap{display:flex;gap:8px;align-items:flex-start}
+.cp-bubble-wrap.user{flex-direction:row-reverse}
+.cp-bubble{max-width:85%;font-size:13px;line-height:1.6;padding:10px 13px;border-radius:4px 12px 12px 12px}
+.cp-bubble.agent{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.88)}
+.cp-bubble.user{background:rgba(0,200,255,0.12);border:1px solid rgba(0,200,255,0.2);color:rgba(255,255,255,0.9);border-radius:12px 4px 12px 12px}
+.cp-chips{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:6px;flex-shrink:0}
+.cp-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:5px 12px;font-size:12px;color:rgba(255,255,255,0.65);cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap}
+.cp-chip:hover{background:rgba(0,200,255,0.1);border-color:rgba(0,200,255,0.3);color:white}
+.cp-input-row{padding:12px 14px 16px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;display:flex;gap:8px;align-items:flex-end}
+.cp-inp{flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:white;font-family:inherit;font-size:13px;padding:9px 12px;outline:none;resize:none;line-height:1.5;max-height:100px;overflow-y:auto;scrollbar-width:none;transition:border-color 0.2s}
+.cp-inp:focus{border-color:rgba(0,200,255,0.4)}
+.cp-inp::placeholder{color:rgba(255,255,255,0.25)}
+.cp-send{width:34px;height:34px;border-radius:8px;background:var(--cyan);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s}
+.cp-send:hover{opacity:0.85}
+.cp-typing{display:flex;gap:4px;align-items:center;padding:10px 13px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;width:fit-content}
+.cp-typing span{width:6px;height:6px;border-radius:50%;background:rgba(0,200,255,0.6);animation:pulse 1s infinite}
+.cp-typing span:nth-child(2){animation-delay:.2s}
+.cp-typing span:nth-child(3){animation-delay:.4s}
+@media(max-width:768px){.chat-panel{width:100%}.chat-toggle{bottom:20px;right:20px}}
+
 /* ── CMO VIEW ── */
 .cmo-pad{padding:28px;max-width:1080px}
 .cmo-header{margin-bottom:28px}
@@ -1274,6 +1328,35 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 
 <div class="toast" id="toastEl"></div>
 
+<!-- ═══════ INLINE CHAT PANEL ═══════ -->
+<div class="chat-panel" id="chatPanel">
+  <div class="cp-head">
+    <div class="cp-avatar">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+      <div class="cp-title">Mirra Agent</div>
+      <div class="cp-sub"><span style="width:6px;height:6px;border-radius:50%;background:#00FF9C;display:inline-block;animation:pulse 2s infinite"></span>Ask about this analysis</div>
+    </div>
+    <button class="cp-close" onclick="toggleChat()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="cp-msgs" id="cpMsgs"></div>
+  <div class="cp-chips" id="cpChips"></div>
+  <div class="cp-input-row">
+    <textarea class="cp-inp" id="cpInp" rows="1" placeholder="Ask anything about this competitor…" onkeydown="cpKeydown(event)" oninput="autoResize(this)"></textarea>
+    <button class="cp-send" onclick="cpSend()">
+      <svg width="14" height="14" viewBox="0 0 15 15" fill="none"><path d="M13 7.5L2 2l2.5 5.5L2 13l11-5.5z" fill="#0D1B2A"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Chat toggle button (only visible on result view) -->
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()" style="display:none" title="Ask Mirra Agent">
+  <svg width="22" height="22" viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+</button>
+
 
 <script>
 // ── CONFIG ──────────────────────────────────────────────
@@ -1300,18 +1383,18 @@ async function apiPost(endpoint, payload) {
 
 function rememberUser(user) {
   S.user = user;
-  sessionStorage.setItem('mirra_user', JSON.stringify(user));
+  localStorage.setItem('mirra_user', JSON.stringify(user));
 }
 
 function stashPendingUrl(v) {
   S.pendingUrl = v;
-  sessionStorage.setItem('mirra_pending_url', v);
+  localStorage.setItem('mirra_pending_url', v);
 }
 
 function consumePendingUrl() {
-  const v = S.pendingUrl || sessionStorage.getItem('mirra_pending_url') || '';
+  const v = S.pendingUrl || localStorage.getItem('mirra_pending_url') || '';
   S.pendingUrl = '';
-  sessionStorage.removeItem('mirra_pending_url');
+  localStorage.removeItem('mirra_pending_url');
   return v;
 }
 
@@ -1340,7 +1423,7 @@ function goTo(p) {
 }
 
 function tryRestoreSession() {
-  const u = sessionStorage.getItem('mirra_user');
+  const u = localStorage.getItem('mirra_user');
   if (u) {
     try { S.user = JSON.parse(u); routeAfterAuth(false); } catch (e) {}
   }
@@ -1457,23 +1540,34 @@ function skipOnboarding() {
 
 function doLogout() {
   S.user = null; S.analyses = [];
-  sessionStorage.removeItem('mirra_user');
-  sessionStorage.removeItem('mirra_pending_url');
+  localStorage.removeItem('mirra_user');
+  localStorage.removeItem('mirra_pending_url');
   goTo('land'); toast('Signed out');
 }
 
 // ── APP BOOT ────────────────────────────────────────────
-function bootApp() {
+async function bootApp() {
   const first = (S.user.name || '').split(' ')[0];
   document.getElementById('greet-name').textContent = first || 'there';
   document.getElementById('sb-uname').textContent = S.user.name || 'User';
   document.getElementById('sb-uav').textContent = (S.user.name || 'U')[0].toUpperCase();
+  // Fetch real usage from server
+  try {
+    const res = await fetch(getBackendBase() + '/usage?email=' + encodeURIComponent(S.user.email || ''));
+    const usage = await res.json();
+    S.left = usage.remaining ?? 3;
+  } catch (_) { S.left = 3; }
   document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
   document.getElementById('stat-left').textContent = S.left;
   updateStats(); renderSidebar(); renderTable();
 }
 
 function focusDash() { switchView('dash'); setTimeout(() => document.getElementById('dash-url')?.focus(), 100); }
+
+function updateCountDisplay() {
+  document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
+  document.getElementById('stat-left').textContent = S.left;
+}
 
 // ── APP VIEWS ────────────────────────────────────────────
 
@@ -1578,7 +1672,10 @@ async function startAnalysis() {
     const result = await callBackend(raw);
     clearInterval(t);
     ids.forEach(id => document.getElementById(id).className = 'ls-d done');
-    S.left--;
+    S.left = Math.max(0, S.left - 1);
+    // Sync real count from server
+    fetch(getBackendBase() + '/usage?email=' + encodeURIComponent(S.user?.email || ''))
+      .then(r => r.json()).then(u => { S.left = u.remaining ?? S.left; updateCountDisplay(); }).catch(() => {});
     const entry = { id: 'local-' + Date.now(), url: raw, domain, result, date: new Date() };
     S.analyses.unshift(entry);
     window._currentAnalysis = entry;
@@ -1606,7 +1703,7 @@ async function callBackend(url) {
     res = await fetch(getBackendBase() + '/analyze', {
       method: 'POST', signal: controller.signal,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
+      body: JSON.stringify({ url, email: S.user?.email || '' })
     });
   } catch (err) {
     clearTimeout(timer);
@@ -1639,6 +1736,12 @@ function renderResult(entry) {
   const c = document.getElementById('result-content');
   if (!c) return;
   window._currentAnalysis = entry;
+  // Reset inline chat for new analysis
+  cpInited = false; cpHistory = [];
+  document.getElementById('cpMsgs').innerHTML = '';
+  document.getElementById('cpChips').innerHTML = '';
+  document.getElementById('chatPanel')?.classList.remove('open');
+  document.getElementById('chatToggle')?.classList.remove('panel-open');
 
   const threatColor = { CRITICAL: 'var(--red)', HIGH: 'var(--amber)', MEDIUM: 'var(--cyan-dark)', LOW: 'var(--green-dark)' }[r.threatLevel] || 'var(--gray-400)';
   const threatBg = { CRITICAL: 'var(--red-light)', HIGH: 'var(--amber-light)', MEDIUM: 'var(--cyan-light)', LOW: 'var(--green-light)' }[r.threatLevel] || 'var(--gray-100)';
@@ -1856,6 +1959,14 @@ function switchView(v) {
   document.getElementById('nav-' + v)?.classList.add('on');
   const titles = { dash: 'Dashboard', load: 'Analyzing…', result: 'Analysis Result', cmo: 'Mirra Agent', watchlist: 'Watchlist', batch: 'Batch Scan' };
   document.getElementById('ab-title').textContent = titles[v] || 'Mirra';
+  // Show chat toggle only on result view
+  const toggle = document.getElementById('chatToggle');
+  if (toggle) toggle.style.display = v === 'result' ? 'flex' : 'none';
+  // Close panel when leaving result
+  if (v !== 'result') {
+    document.getElementById('chatPanel')?.classList.remove('open');
+    document.getElementById('chatToggle')?.classList.remove('panel-open');
+  }
   if (v === 'cmo') initAgent();
 }
 
@@ -2055,6 +2166,125 @@ function getFollowUpSuggestions(taskType) {
 // Keep old generateCMOInsights as a no-op (called from old nav code)
 function generateCMOInsights() { initAgent(); }
 function renderCMO() {}
+
+// ── INLINE CHAT PANEL ────────────────────────────────────
+let cpHistory = [];
+let cpRunning = false;
+let cpInited = false;
+
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  const btn = document.getElementById('chatToggle');
+  const isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('panel-open', isOpen);
+  if (isOpen && !cpInited) cpInit();
+  if (isOpen) setTimeout(() => document.getElementById('cpInp')?.focus(), 300);
+}
+
+function cpInit() {
+  cpInited = true;
+  cpHistory = [];
+  const domain = window._currentAnalysis?.domain || 'this competitor';
+  cpAppend('agent', `I've got the full analysis of **${domain}** loaded. What do you want to do with it?`);
+  cpRenderChips([
+    { label: '📅 7-day action plan', msg: 'Turn these insights into a 7-day action plan' },
+    { label: '✍️ Write homepage copy', msg: 'Write 3 homepage headline variants that exploit their gaps' },
+    { label: '⚠️ How big a threat?', msg: 'How big a threat is this competitor to my brand specifically?' },
+    { label: '💰 Pricing response', msg: 'How should I respond to their pricing strategy?' },
+  ]);
+}
+
+function cpAppend(role, text) {
+  const msgs = document.getElementById('cpMsgs');
+  if (!msgs) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'cp-bubble-wrap' + (role === 'user' ? ' user' : '');
+  const bubble = document.createElement('div');
+  bubble.className = 'cp-bubble ' + role;
+  bubble.innerHTML = text
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:white;font-weight:600">$1</strong>')
+    .replace(/\n\n/g, '</p><p style="margin-top:8px">')
+    .replace(/\n/g, '<br>');
+  bubble.innerHTML = '<p>' + bubble.innerHTML + '</p>';
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function cpTyping(show) {
+  const msgs = document.getElementById('cpMsgs');
+  document.getElementById('cp-typing-indicator')?.remove();
+  if (!show) return;
+  const el = document.createElement('div');
+  el.id = 'cp-typing-indicator';
+  el.className = 'cp-typing';
+  el.innerHTML = '<span></span><span></span><span></span>';
+  msgs.appendChild(el);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function cpRenderChips(chips) {
+  const el = document.getElementById('cpChips');
+  if (!el) return;
+  el.innerHTML = chips.map(c =>
+    `<button class="cp-chip" onclick="cpChipClick('${c.msg.replace(/'/g, "\\'")}')">${c.label}</button>`
+  ).join('');
+}
+
+function cpChipClick(msg) {
+  document.getElementById('cpChips').innerHTML = '';
+  document.getElementById('cpInp').value = msg;
+  cpSend();
+}
+
+function cpKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); cpSend(); }
+}
+
+async function cpSend() {
+  if (cpRunning) return;
+  const inp = document.getElementById('cpInp');
+  const msg = inp?.value.trim();
+  if (!msg) return;
+  inp.value = ''; inp.style.height = 'auto';
+  document.getElementById('cpChips').innerHTML = '';
+  cpAppend('user', msg);
+  cpHistory.push({ role: 'user', content: msg });
+  cpRunning = true;
+  document.querySelector('.cp-send').style.opacity = '0.4';
+  cpTyping(true);
+  try {
+    const res = await fetch(getBackendBase() + '/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: msg,
+        history: cpHistory.slice(-8),
+        analysis: window._currentAnalysis?.result || null,
+        domain: window._currentAnalysis?.domain || null,
+        profile: S.user?.profile || {}
+      })
+    });
+    const data = await res.json();
+    cpTyping(false);
+    if (!res.ok || !data.success) throw new Error(data.error || 'Agent error');
+    const reply = data.result?.response || data.result || 'Done.';
+    const replyText = typeof reply === 'string' ? reply : formatTaskResult(data.result);
+    cpHistory.push({ role: 'assistant', content: replyText });
+    cpAppend('agent', replyText);
+    cpRenderChips([
+      { label: '📋 Copy this', msg: 'Format that as a clean bullet list I can copy' },
+      { label: '🔎 Go deeper', msg: 'Go deeper on the most important point' },
+      { label: '📅 Make it a plan', msg: 'Turn this into an action plan with deadlines' },
+    ]);
+  } catch (err) {
+    cpTyping(false);
+    cpAppend('agent', `Hit an issue: **${err.message}**. Make sure the backend is running.`);
+  } finally {
+    cpRunning = false;
+    document.querySelector('.cp-send').style.opacity = '1';
+  }
+}
 
 
 
