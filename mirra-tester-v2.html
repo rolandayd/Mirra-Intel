@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mirra — Market Intelligence for Modern Teams</title>
+<meta name="description" content="Know your market. Own your position. Mirra gives you real-time competitive intelligence and strategic insights to win.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Brand Colors - from logo */
+  --navy-950:#0D1B2A;
+  --navy-900:#0D1B2A;
+  --navy-800:#112236;
+  --navy-700:#162B42;
+  --navy-600:#1C3450;
+  --navy-500:#243E60;
+  --navy-400:#3A5878;
+  --navy-300:#6A8BA8;
+  --navy-200:#A0B8CC;
+  --navy-100:#D0DDE8;
+  --navy-50:#EBF1F7;
+
+  /* Accent Colors - exact logo colors */
+  --cyan:#00C8FF;
+  --cyan-dark:#00A8D8;
+  --cyan-light:rgba(0,200,255,0.12);
+  --green:#00FF9C;
+  --green-dark:#00CC7A;
+  --green-light:rgba(0,255,156,0.12);
+  --amber:#F59E0B;
+  --amber-light:rgba(245,158,11,0.12);
+  --red:#EF4444;
+  --red-light:rgba(239,68,68,0.12);
+  --purple:#8B5CF6;
+  --purple-light:rgba(139,92,246,0.12);
+  
+  /* Neutrals */
+  --white:#FFFFFF;
+  --gray-50:#F9FAFB;
+  --gray-100:#F3F4F6;
+  --gray-200:#E5E7EB;
+  --gray-300:#D1D5DB;
+  --gray-400:#9CA3AF;
+  --gray-500:#6B7280;
+  --gray-600:#4B5563;
+  --gray-700:#374151;
+  --gray-800:#1F2937;
+  --gray-900:#111827;
+  
+  /* Semantic */
+  --bg:var(--gray-50);
+  --bg-elevated:var(--white);
+  --text:var(--gray-900);
+  --text-muted:var(--gray-600);
+  --text-subtle:var(--gray-500);
+  --border:var(--gray-200);
+  --border-strong:var(--gray-300);
+  
+  /* Shadows */
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.05);
+  --shadow:0 1px 3px rgba(0,0,0,0.1),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg:0 10px 15px rgba(0,0,0,0.1),0 4px 6px rgba(0,0,0,0.05);
+  --shadow-xl:0 20px 25px rgba(0,0,0,0.1),0 10px 10px rgba(0,0,0,0.04);
+  
+  /* Radius */
+  --r-sm:6px;
+  --r:8px;
+  --r-md:10px;
+  --r-lg:12px;
+  --r-xl:16px;
+  --r-2xl:20px;
+}
+
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-weight:400;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Typography */
+h1,h2,h3,h4,h5,h6{font-family:'Fraunces',serif;font-weight:400;line-height:1.2;letter-spacing:-0.02em}
+.text-balance{text-wrap:balance}
+
+/* Page System */
+.page{display:none}
+.page.show{display:block}
+#pg-login.show,#pg-signup.show,#pg-onboard.show{display:flex}
+#pg-app.show{display:flex;position:fixed;inset:0;height:100vh;overflow:hidden;z-index:100}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--r);
+  font-family:inherit;font-size:14px;font-weight:500;
+  cursor:pointer;transition:all 0.15s;
+  border:none;text-decoration:none;white-space:nowrap;
+}
+.btn-primary{background:var(--navy-900);color:var(--white)}
+.btn-primary:hover{background:var(--navy-800);transform:translateY(-1px)}
+.btn-secondary{background:var(--white);color:var(--navy-900);border:1.5px solid var(--border-strong)}
+.btn-secondary:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.btn-ghost{background:transparent;color:var(--text-muted)}
+.btn-ghost:hover{background:var(--gray-100);color:var(--text)}
+
+/* Forms */
+.input{
+  width:100%;padding:11px 14px;
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:inherit;font-size:14px;
+  background:var(--white);color:var(--text);
+  transition:border-color 0.2s,box-shadow 0.2s;
+  outline:none;
+}
+.input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-light)}
+.input::placeholder{color:var(--gray-400)}
+
+.label{
+  display:block;font-size:13px;font-weight:500;
+  color:var(--text);margin-bottom:6px;
+}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--navy-900);color:var(--white);
+  padding:12px 20px;border-radius:var(--r-lg);
+  box-shadow:var(--shadow-xl);z-index:9999;
+  opacity:0;transition:opacity 0.25s,transform 0.25s;
+  pointer-events:none;font-size:14px;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+
+<style>
+/* ── NAV ── */
+.topnav{
+  position:fixed;inset:0 0 auto 0;z-index:200;height:60px;
+  display:flex;align-items:center;padding:0 40px;justify-content:space-between;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.tn-logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.tn-mark{width:32px;height:32px;background:var(--navy-900);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tn-mark svg{width:18px;height:18px}
+.tn-name{font-family:'Fraunces',serif;font-size:19px;font-weight:400;color:var(--navy-900);letter-spacing:-0.3px}
+.tn-links{display:flex;gap:4px;list-style:none}
+.tn-links a{font-size:14px;color:var(--text-muted);text-decoration:none;padding:6px 12px;border-radius:var(--r);transition:all 0.15s}
+.tn-links a:hover{color:var(--text);background:var(--gray-100)}
+.tn-right{display:flex;align-items:center;gap:8px}
+.tn-ham{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:8px;border-radius:var(--r)}
+.tn-ham span{display:block;width:18px;height:1.5px;background:var(--text);border-radius:2px}
+.mob-nav{display:none;position:fixed;top:60px;inset:0 0 auto 0;z-index:199;background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px 20px;flex-direction:column;gap:2px;box-shadow:var(--shadow-lg)}
+.mob-nav.open{display:flex}
+.mob-nav a{font-size:15px;color:var(--text);text-decoration:none;padding:12px 14px;border-radius:var(--r);transition:background 0.15s}
+.mob-nav a:hover{background:var(--gray-100)}
+.mob-div{height:1px;background:var(--border);margin:6px 0}
+.mob-btn{background:var(--navy-900);color:white;border:none;padding:14px;border-radius:var(--r-lg);font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;margin-top:4px}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:120px 24px 80px;
+  position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(17,199,255,0.08) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 80%,rgba(24,234,197,0.05) 0%,transparent 55%),
+    radial-gradient(ellipse 40% 30% at 10% 70%,rgba(139,92,246,0.04) 0%,transparent 50%);
+}
+.hero-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(15,31,56,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(15,31,56,0.04) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 20%,transparent 75%);
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--white);border:1px solid var(--border);border-radius:100px;
+  padding:6px 16px;font-size:13px;color:var(--text-muted);
+  box-shadow:var(--shadow-sm);margin-bottom:32px;position:relative;z-index:1;
+}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.hero h1{
+  font-size:clamp(42px,6vw,80px);font-weight:300;letter-spacing:-0.03em;
+  line-height:1.05;margin-bottom:24px;max-width:820px;
+  position:relative;z-index:1;color:var(--navy-900);
+}
+.hero h1 em{font-style:italic;color:var(--navy-400)}
+.hero-sub{
+  font-size:clamp(16px,1.8vw,19px);color:var(--text-muted);
+  line-height:1.7;max-width:500px;margin-bottom:40px;
+  font-weight:400;position:relative;z-index:1;
+}
+.hero-cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;margin-bottom:16px}
+.hero-cta-row .btn{padding:13px 28px;font-size:15px}
+.hero-note{font-size:13px;color:var(--gray-400);position:relative;z-index:1}
+.hero-social{display:flex;align-items:center;gap:14px;margin-top:32px;position:relative;z-index:1}
+.hs-faces{display:flex}
+.hs-faces span{width:28px;height:28px;border-radius:50%;border:2px solid var(--white);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;margin-left:-8px}
+.hs-faces span:first-child{margin-left:0}
+.hs-txt{font-size:13px;color:var(--text-muted)}
+.hs-txt strong{color:var(--text);font-weight:600}
+
+/* ── DEMO WIDGET ── */
+.demo-section{padding:0 24px 100px;display:flex;flex-direction:column;align-items:center}
+.section-eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-400);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.section-eyebrow::before,.section-eyebrow::after{content:'';height:1px;background:var(--border);width:48px}
+.demo-widget{width:100%;max-width:960px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-2xl);overflow:hidden;box-shadow:var(--shadow-xl)}
+.dw-chrome{background:var(--gray-50);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px}
+.dw-dots{display:flex;gap:6px}
+.dw-dots span{width:12px;height:12px;border-radius:50%}
+.dd-r{background:#FF5F57}.dd-y{background:#FEBC2E}.dd-g{background:#28C840}
+.dw-urlbar{flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:6px 14px;font-size:13px;color:var(--text-muted);text-align:center;margin:0 12px;display:flex;align-items:center;justify-content:center;gap:6px}
+.dw-urlbar svg{width:11px;height:11px;color:var(--green);flex-shrink:0}
+.dw-pill{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;background:var(--cyan-light);color:var(--cyan-dark);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.dw-pill-dot{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:pulse 1.2s infinite}
+.dw-body{display:grid;grid-template-columns:1.2fr 1fr;min-height:480px}
+.dw-preview{border-right:1px solid var(--border);background:#F5F4F1;position:relative;overflow:hidden}
+.scan-beam{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(17,199,255,0.8),transparent);pointer-events:none;z-index:10;top:-5px;animation:scan 2.8s ease-in-out infinite}
+.scan-glow{position:absolute;left:0;right:0;height:60px;background:linear-gradient(180deg,rgba(17,199,255,0.07),transparent);pointer-events:none;z-index:9;top:-60px;animation:scan 2.8s ease-in-out infinite}
+@keyframes scan{0%{top:-5px;opacity:0}8%{opacity:1}88%{opacity:1}100%{top:100%;opacity:0}}
+.fw-nav{background:var(--white);height:44px;border-bottom:1px solid #eee;display:flex;align-items:center;padding:0 16px;gap:10px}
+.fw-logo{width:56px;height:8px;background:#111;border-radius:2px}
+.fw-links{display:flex;gap:8px;margin-left:auto}
+.fw-link{width:28px;height:6px;background:#ddd;border-radius:2px}
+.fw-cta{width:48px;height:22px;background:#111;border-radius:4px;margin-left:8px}
+.fw-hero{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px 16px 0;align-items:center}
+.fwh-h1{width:110px;height:11px;background:#1c1c1c;border-radius:2px;margin-bottom:6px}
+.fwh-h2{width:82px;height:11px;background:#1c1c1c;border-radius:2px;margin-bottom:13px}
+.fwh-p{width:140px;height:6px;background:#d0d0d0;border-radius:2px;margin-bottom:5px}
+.fwh-p2{width:110px;height:6px;background:#d0d0d0;border-radius:2px;margin-bottom:16px}
+.fwh-btns{display:flex;gap:7px}
+.fwh-btn{width:66px;height:24px;background:#111;border-radius:4px}
+.fwh-ghost{width:52px;height:24px;border:1.5px solid #ccc;border-radius:4px}
+.fwh-img{background:linear-gradient(145deg,#e5e3df,#d5d3cd);border-radius:8px;height:110px}
+.fw-trust{display:flex;gap:10px;padding:14px 16px;align-items:center}
+.fwt-bar{height:5px;width:55px;background:#e0e0e0;border-radius:2px}
+.fwt-bar.dark{background:#bbb;width:40px}
+.fw-features{padding:0 16px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fwf-card{background:#fff;border-radius:6px;padding:8px;border:1px solid #eee}
+.fwf-icon{width:16px;height:16px;background:#e8e8e8;border-radius:3px;margin-bottom:5px}
+.fwf-t1{width:44px;height:6px;background:#ccc;border-radius:2px;margin-bottom:4px}
+.fwf-t2{width:36px;height:5px;background:#e0e0e0;border-radius:2px}
+.chip{position:absolute;font-size:10px;font-weight:500;padding:4px 10px;border-radius:6px;white-space:nowrap;pointer-events:none;display:flex;align-items:center;gap:4px;opacity:0}
+.chip::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.c-nav{top:10px;left:10px;color:#1D6AF8;background:rgba(29,106,248,0.12);border:1px solid rgba(29,106,248,0.22);animation:cin .3s .6s forwards}
+.c-logo{top:10px;left:96px;color:#F59E0B;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22);animation:cin .3s 1.0s forwards}
+.c-hero{top:54px;left:10px;color:#8B5CF6;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.22);animation:cin .3s 1.4s forwards}
+.c-cta{top:158px;left:10px;color:#EF4444;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.22);animation:cin .3s 1.8s forwards}
+.c-img{top:58px;right:10px;color:#18EAC5;background:rgba(24,234,197,0.12);border:1px solid rgba(24,234,197,0.22);animation:cin .3s 2.2s forwards}
+.c-trust{top:212px;left:10px;color:#F59E0B;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.22);animation:cin .3s 2.6s forwards}
+@keyframes cin{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:translateX(0)}}
+.dw-scorebar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(8px);border-top:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px}
+.dsb-badge{display:flex;align-items:center;gap:6px;background:var(--amber-light);border:1px solid rgba(245,158,11,0.2);border-radius:var(--r);padding:6px 12px;flex-shrink:0}
+.dsb-num{font-family:'Fraunces',serif;font-size:20px;font-weight:400;color:var(--amber);line-height:1}
+.dsb-lbl{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px}
+.dsb-track{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.dsb-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:2px;width:0;transition:width 2s cubic-bezier(.4,0,.2,1)}
+.dw-insights{padding:24px;display:flex;flex-direction:column;overflow-y:auto;max-height:480px}
+.dwi-head{margin-bottom:18px}
+.dwi-title{font-size:15px;font-weight:600;letter-spacing:-0.2px;margin-bottom:3px}
+.dwi-sub{font-size:13px;color:var(--text-muted)}
+.ins-row{display:flex;gap:12px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border)}
+.ins-row:last-child{border-bottom:none;padding-bottom:0}
+.ins-ico{width:32px;height:32px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.ins-ico svg{width:15px;height:15px}
+.ico-steal{background:var(--green-light);color:var(--green-dark)}
+.ico-gap{background:var(--red-light);color:var(--red)}
+.ico-watch{background:var(--amber-light);color:var(--amber)}
+.ins-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.ins-txt{font-size:13px;color:var(--gray-700);line-height:1.55}
+.ins-pill{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;margin-top:7px}
+.ip-g{background:var(--green-light);color:var(--green-dark)}
+.ip-r{background:var(--red-light);color:var(--red)}
+.ip-a{background:var(--amber-light);color:var(--amber)}
+.dw-footer{border-top:1px solid var(--border);background:var(--gray-50);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.dwf-left{font-size:13px;color:var(--text-muted)}
+.dwf-left strong{color:var(--text);font-weight:500}
+.dwf-right{display:flex;gap:8px;flex-wrap:wrap}
+.share-btn{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);color:var(--gray-700);cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit}
+.share-btn:hover{background:var(--navy-900);color:white;border-color:var(--navy-900)}
+
+/* ── HOW IT WORKS ── */
+.hiw-section{padding:100px 24px;max-width:1160px;margin:0 auto}
+.sec-eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-400);margin-bottom:14px}
+.sec-h2{font-size:clamp(32px,3.5vw,48px);font-weight:300;letter-spacing:-0.03em;line-height:1.1;margin-bottom:16px;color:var(--navy-900)}
+.sec-h2 em{font-style:italic;color:var(--navy-400)}
+.sec-sub{font-size:16px;color:var(--text-muted);line-height:1.7;max-width:520px;margin-bottom:56px}
+.hiw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.hiw-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:32px;transition:all 0.2s}
+.hiw-card:hover{box-shadow:var(--shadow-md);border-color:var(--border-strong);transform:translateY(-2px)}
+.hiw-n{font-size:12px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:18px;font-family:'Inter',sans-serif}
+.hiw-icon{width:44px;height:44px;border-radius:var(--r-lg);background:var(--navy-50);border:1px solid var(--navy-100);display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.hiw-icon svg{width:22px;height:22px;color:var(--navy-700)}
+.hiw-card h3{font-size:18px;font-weight:500;letter-spacing:-0.3px;margin-bottom:10px;font-family:'Inter',sans-serif}
+.hiw-card p{font-size:14px;color:var(--text-muted);line-height:1.7}
+
+/* ── PRICING ── */
+.price-section{background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:100px 24px}
+.price-inner{max-width:1160px;margin:0 auto}
+.plans{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:52px}
+.pl{border:1px solid var(--border);border-radius:var(--r-2xl);padding:28px;position:relative;background:var(--gray-50);transition:box-shadow 0.2s}
+.pl:hover{box-shadow:var(--shadow-md)}
+.pl.hot{background:var(--navy-900);border-color:var(--navy-900)}
+.pl-tag{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--cyan);color:var(--navy-900);font-size:11px;font-weight:600;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.pl-tier{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:500;margin-bottom:14px;font-family:'Inter',sans-serif}
+.pl.hot .pl-tier{color:rgba(255,255,255,0.4)}
+.pl-price{font-family:'Fraunces',serif;font-size:48px;font-weight:300;letter-spacing:-2px;line-height:1;color:var(--navy-900)}
+.pl-price sup{font-size:22px;vertical-align:super;letter-spacing:0}
+.pl.hot .pl-price{color:white}
+.pl-period{font-size:13px;color:var(--gray-400);margin:4px 0 24px}
+.pl.hot .pl-period{color:rgba(255,255,255,0.3)}
+.pl-rule{height:1px;background:var(--border);margin-bottom:20px}
+.pl.hot .pl-rule{background:rgba(255,255,255,0.1)}
+.pl-feats{list-style:none;margin-bottom:28px;display:flex;flex-direction:column;gap:10px}
+.pl-feats li{font-size:13px;display:flex;align-items:flex-start;gap:8px;color:var(--gray-700);line-height:1.4}
+.pl-feats li svg{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+.pl.hot .pl-feats li{color:rgba(255,255,255,0.7)}
+.pf-y{color:var(--green)}.pf-n{color:var(--gray-300)}
+.pl.hot .pf-y{color:#86EFAC}
+.pl-btn{display:block;text-align:center;padding:12px;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid var(--border-strong);color:var(--text);background:var(--white);transition:all 0.15s;text-decoration:none}
+.pl.hot .pl-btn{background:white;color:var(--navy-900);border-color:transparent}
+.pl-btn:hover{opacity:0.85;transform:translateY(-1px)}
+
+/* ── FINAL CTA ── */
+.fcta-section{padding:100px 24px;max-width:960px;margin:0 auto;text-align:center}
+.fcta-box{background:var(--navy-900);border-radius:var(--r-2xl);padding:72px 64px;position:relative;overflow:hidden}
+.fcta-box::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(17,199,255,0.15),transparent 65%);top:-150px;right:-100px;pointer-events:none}
+.fcta-box::after{content:'';position:absolute;width:320px;height:320px;background:radial-gradient(circle,rgba(24,234,197,0.1),transparent 65%);bottom:-80px;left:-80px;pointer-events:none}
+.fcta-ey{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,0.3);margin-bottom:16px}
+.fcta-h{font-size:clamp(32px,4vw,54px);font-weight:300;letter-spacing:-0.03em;line-height:1.08;color:white;margin-bottom:14px;position:relative;z-index:1}
+.fcta-h em{font-style:italic;color:rgba(255,255,255,0.4)}
+.fcta-sub{font-size:16px;color:rgba(255,255,255,0.45);margin-bottom:36px;position:relative;z-index:1}
+.fcta-row{display:flex;gap:10px;max-width:460px;margin:0 auto 14px;position:relative;z-index:1}
+.fcta-inp{flex:1;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:var(--r);color:white;font-family:inherit;font-size:14px;padding:13px 16px;outline:none;transition:border-color 0.2s;min-width:0}
+.fcta-inp::placeholder{color:rgba(255,255,255,0.3)}
+.fcta-inp:focus{border-color:var(--cyan)}
+.fcta-btn{background:var(--cyan);color:var(--navy-900);border:none;padding:13px 24px;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:opacity 0.15s;white-space:nowrap}
+.fcta-btn:hover{opacity:0.9}
+.fcta-note{font-size:13px;color:rgba(255,255,255,0.25);position:relative;z-index:1}
+
+/* ── FOOTER ── */
+footer{background:var(--white);border-top:1px solid var(--border);padding:56px 40px 36px}
+.foot-inner{max-width:1160px;margin:0 auto}
+.foot-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.fb-tagline{font-size:13px;color:var(--text-muted);line-height:1.7;max-width:220px;margin-top:12px}
+.fb-contact{font-size:12px;color:var(--gray-400);line-height:2;margin-top:14px}
+.fc-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:16px;color:var(--text)}
+.fc-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.fc-links a{font-size:13px;color:var(--text-muted);text-decoration:none;transition:color 0.15s}
+.fc-links a:hover{color:var(--text)}
+.foot-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-copy{font-size:13px;color:var(--gray-400)}
+.foot-badges{display:flex;gap:8px;flex-wrap:wrap}
+.fb-badge{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray-400);border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 10px}
+.fb-badge svg{width:12px;height:12px}
+
+@media(max-width:768px){
+  .topnav{padding:0 20px}
+  .tn-links,.tn-right .btn-secondary{display:none}
+  .tn-ham{display:flex}
+  .hero{padding:100px 20px 60px}
+  .hiw-grid{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr 1fr}
+  .dw-body{grid-template-columns:1fr}
+  .dw-preview{display:none}
+  .foot-top{grid-template-columns:1fr 1fr;gap:32px}
+  .fcta-box{padding:48px 28px}
+  .fcta-row{flex-direction:column}
+}
+@media(max-width:480px){
+  .plans{grid-template-columns:1fr}
+  .foot-top{grid-template-columns:1fr}
+}
+</style>
+
+
+<!-- ═══════ LANDING ═══════ -->
+<div id="pg-land" class="page show">
+
+<nav class="topnav">
+  <a class="tn-logo" onclick="goTo('land')">
+    <div class="tn-mark">
+      <svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+    </div>
+    <span class="tn-name">Mirra</span>
+  </a>
+  <ul class="tn-links">
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <div class="tn-right">
+    <button class="btn btn-ghost" onclick="goTo('login')">Sign in</button>
+    <button class="btn btn-primary" onclick="goTo('signup')">Get started free</button>
+    <button class="tn-ham" onclick="toggleMob()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mob-nav" id="mobNav">
+  <a href="#how-it-works" onclick="closeMob()">How it works</a>
+  <a href="#pricing" onclick="closeMob()">Pricing</a>
+  <div class="mob-div"></div>
+  <a href="#" onclick="closeMob();goTo('login')">Sign in</a>
+  <button class="mob-btn" onclick="closeMob();goTo('signup')">Get started free</button>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-badge"><span class="badge-dot"></span>Market intelligence for modern teams</div>
+  <h1 class="text-balance">Know your market.<br>Own your <em>position.</em></h1>
+  <p class="hero-sub">Mirra learns your brand first, then maps your entire competitive landscape — giving you the strategic intelligence to win.</p>
+  <div class="hero-cta-row">
+    <button class="btn btn-primary" onclick="goTo('signup')" style="background:var(--navy-900);padding:14px 32px;font-size:15px">
+      Start for free
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 7h9M8 3.5l3.5 3.5L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="btn btn-secondary" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">How it works</button>
+  </div>
+  <p class="hero-note">Free · No credit card · 3 analyses included</p>
+
+  <div class="hero-social">
+    <div class="hs-faces">
+      <span style="background:linear-gradient(135deg,#667eea,#764ba2)">A</span>
+      <span style="background:linear-gradient(135deg,#f093fb,#f5576c)">M</span>
+      <span style="background:linear-gradient(135deg,#4facfe,#00f2fe)">J</span>
+      <span style="background:linear-gradient(135deg,#43e97b,#38f9d7)">S</span>
+    </div>
+    <p class="hs-txt">Trusted by <strong>2,400+</strong> growth teams</p>
+  </div>
+</section>
+
+
+<!-- How it works -->
+    <div class="dw-body">
+      <div class="dw-preview">
+        <div class="scan-beam"></div>
+        <div class="scan-glow"></div>
+        <div class="fw-nav"><div class="fw-logo"></div><div class="fw-links"><div class="fw-link"></div><div class="fw-link"></div><div class="fw-link"></div></div><div class="fw-cta"></div></div>
+        <div class="fw-hero"><div><div class="fwh-h1"></div><div class="fwh-h2"></div><div class="fwh-p"></div><div class="fwh-p2"></div><div class="fwh-btns"><div class="fwh-btn"></div><div class="fwh-ghost"></div></div></div><div class="fwh-img"></div></div>
+        <div class="fw-trust"><div class="fwt-bar"></div><div class="fwt-bar dark"></div><div class="fwt-bar"></div><div class="fwt-bar dark"></div></div>
+        <div class="fw-features"><div class="fwf-card"><div class="fwf-icon"></div><div class="fwf-t1"></div><div class="fwf-t2"></div></div><div class="fwf-card"><div class="fwf-icon"></div><div class="fwf-t1"></div><div class="fwf-t2"></div></div><div class="fwf-card"><div class="fwf-icon"></div><div class="fwf-t1"></div><div class="fwf-t2"></div></div></div>
+        <span class="chip c-nav">Navigation</span>
+        <span class="chip c-logo">Logo mark</span>
+        <span class="chip c-hero">Hero section</span>
+        <span class="chip c-cta">Primary CTA</span>
+        <span class="chip c-img">Hero visual</span>
+        <span class="chip c-trust">Trust signals</span>
+        <div class="dw-scorebar">
+          <div class="dsb-badge"><div class="dsb-num">71</div><div class="dsb-lbl">Score</div></div>
+          <span style="font-size:12px;color:var(--text-muted)">8 components</span>
+          <div class="dsb-track"><div class="dsb-fill" id="demo-fill"></div></div>
+          <span style="font-size:12px;font-weight:500;color:var(--text-muted)">71%</span>
+        </div>
+      </div>
+      <div class="dw-insights">
+        <div class="dwi-head">
+          <div class="dwi-title">Market Intelligence — notion.so</div>
+          <div class="dwi-sub">5 strategic findings · vs. your brand</div>
+        </div>
+        <div class="ins-row">
+          <div class="ins-ico ico-steal"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v10M3 6l4-4 4 4"/></svg></div>
+          <div>
+            <div class="ins-type" style="color:var(--green-dark)">Steal this</div>
+            <div class="ins-txt">Outcome-led hero copy ("write, plan, share") converts 2× better than feature-led headlines.</div>
+            <span class="ins-pill ip-g">↑ Copy the approach</span>
+          </div>
+        </div>
+        <div class="ins-row">
+          <div class="ins-ico ico-steal"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v10M3 6l4-4 4 4"/></svg></div>
+          <div>
+            <div class="ins-type" style="color:var(--green-dark)">Steal this</div>
+            <div class="ins-txt">5-item nav with zero dropdowns above the fold — reduces decision fatigue significantly.</div>
+            <span class="ins-pill ip-g">↑ Nav structure</span>
+          </div>
+        </div>
+        <div class="ins-row">
+          <div class="ins-ico ico-gap"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V2M3 8l4 4 4-4"/></svg></div>
+          <div>
+            <div class="ins-type" style="color:var(--red)">Their gap</div>
+            <div class="ins-txt">No pricing visible from landing — forces sign-up before cost is revealed. High friction for B2B buyers.</div>
+            <span class="ins-pill ip-r">↓ Easy to exploit</span>
+          </div>
+        </div>
+        <div class="ins-row">
+          <div class="ins-ico ico-gap"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12V2M3 8l4 4 4-4"/></svg></div>
+          <div>
+            <div class="ins-type" style="color:var(--red)">Their gap</div>
+            <div class="ins-txt">Social proof is logos only — no testimonial quotes near the CTA. Easy to outdo.</div>
+            <span class="ins-pill ip-r">↓ Outdo with real quotes</span>
+          </div>
+        </div>
+        <div class="ins-row">
+          <div class="ins-ico ico-watch"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><path d="M7 4.5v3l1.5 1.2"/></svg></div>
+          <div>
+            <div class="ins-type" style="color:var(--amber)">Watch</div>
+            <div class="ins-txt">Product demo video is below the fold on mobile — monitor if this affects their conversion rate.</div>
+            <span class="ins-pill ip-a">→ Monitor</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dw-footer">
+      <div class="dwf-left">This is a <strong>real Mirra analysis</strong> · Generated in 14s</div>
+      <div class="dwf-right">
+        <button class="share-btn" onclick="goTo('signup')">Get your own analysis →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section class="hiw-section" id="how-it-works">
+  <p class="sec-eyebrow">How it works</p>
+  <h2 class="sec-h2">Brand first.<br><em>Intelligence second.</em></h2>
+  <p class="sec-sub">Mirra starts by understanding your brand, goals, and market — so every insight is tailored to your specific competitive position.</p>
+  <div class="hiw-grid">
+    <div class="hiw-card">
+      <div class="hiw-n">Step 01</div>
+      <div class="hiw-icon"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M11 3C7 3 4 7 4 11s3 8 7 8 7-4 7-8"/><circle cx="11" cy="11" r="2.5"/><path d="M16 6l-2 2"/></svg></div>
+      <h3>Tell us about your brand</h3>
+      <p>60-second setup. Your product, audience, goals, and market. Mirra uses this to make every insight relevant to you — not just generic observations.</p>
+    </div>
+    <div class="hiw-card">
+      <div class="hiw-n">Step 02</div>
+      <div class="hiw-icon"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M11 5v3M11 13v3M5 11h3M13 11h3"/><circle cx="11" cy="11" r="2"/></svg></div>
+      <h3>Scan your competitors</h3>
+      <p>Paste any URL. Mirra renders the page, labels every component with AI, and maps their positioning, gaps, and strengths in seconds.</p>
+    </div>
+    <div class="hiw-card">
+      <div class="hiw-n">Step 03</div>
+      <div class="hiw-icon"><svg viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l2.5 2.5 5-5"/><path d="M5 3h12a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/></svg></div>
+      <h3>Get your strategic playbook</h3>
+      <p>Steal, exploit, or watch — every insight is framed against your brand. Export as PDF, share with your team, or ask the AI strategist follow-up questions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="price-section" id="pricing">
+  <div class="price-inner">
+    <p class="sec-eyebrow">Pricing</p>
+    <h2 class="sec-h2">Built for teams<br>that <em>move fast.</em></h2>
+    <p class="sec-sub">Start free. Agencies make back the plan cost on a single client report.</p>
+    <div class="plans">
+      <div class="pl">
+        <div class="pl-tier">Free</div>
+        <div class="pl-price"><sup>$</sup>0</div>
+        <div class="pl-period">Forever free · no card</div>
+        <hr class="pl-rule">
+        <ul class="pl-feats">
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>3 analyses / month</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Component labeling</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Shareable report</li>
+          <li><svg class="pf-n" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>PDF export</li>
+          <li><svg class="pf-n" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>AI strategist</li>
+        </ul>
+        <button class="pl-btn" onclick="goTo('signup')">Start free</button>
+      </div>
+      <div class="pl hot">
+        <div class="pl-tag">Most popular</div>
+        <div class="pl-tier">Pro</div>
+        <div class="pl-price"><sup>$</sup>79</div>
+        <div class="pl-period">per month · cancel anytime</div>
+        <hr class="pl-rule">
+        <ul class="pl-feats">
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited analyses</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Full AI brief</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>PDF + Figma export</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>AI strategist chat</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>History &amp; saved analyses</li>
+        </ul>
+        <button class="pl-btn" onclick="goTo('signup')">Start Pro</button>
+      </div>
+      <div class="pl">
+        <div class="pl-tier">Agency</div>
+        <div class="pl-price"><sup>$</sup>249</div>
+        <div class="pl-period">per month · 5 seats</div>
+        <hr class="pl-rule">
+        <ul class="pl-feats">
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Pro</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>White-label reports</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Batch CSV (30 URLs)</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Client workspaces</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority support</li>
+        </ul>
+        <button class="pl-btn" onclick="goTo('signup')">Start Agency</button>
+      </div>
+      <div class="pl">
+        <div class="pl-tier">Enterprise</div>
+        <div class="pl-price" style="font-size:32px;letter-spacing:-1px">Custom</div>
+        <div class="pl-period">Contact us · unlimited seats</div>
+        <hr class="pl-rule">
+        <ul class="pl-feats">
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Agency</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited seats</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>SSO / SAML</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Change detection alerts</li>
+          <li><svg class="pf-y" viewBox="0 0 14 14" fill="none"><path d="M2.5 7l3 3 6-5.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Dedicated success manager</li>
+        </ul>
+        <button class="pl-btn" onclick="toast('Sales team will be in touch!')">Talk to sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="fcta-section">
+  <div class="fcta-box">
+    <p class="fcta-ey">Get started today</p>
+    <h2 class="fcta-h">Stop guessing.<br><em>Start winning.</em></h2>
+    <p class="fcta-sub">Set up your brand profile in 60 seconds. Your first 3 analyses are free.</p>
+    <div class="fcta-row">
+      <input class="fcta-inp" id="fctaEmail" type="email" placeholder="you@company.com">
+      <button class="fcta-btn" onclick="fctaGo()">Get started →</button>
+    </div>
+    <p class="fcta-note">No credit card required. Cancel anytime.</p>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <a class="tn-logo" onclick="goTo('land')" style="display:inline-flex;text-decoration:none">
+          <div class="tn-mark" style="width:28px;height:28px;border-radius:7px"><svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg></div>
+          <span class="tn-name" style="font-size:17px">Mirra</span>
+        </a>
+        <p class="fb-tagline">Market intelligence for agencies and growth teams who move fast.</p>
+        <div class="fb-contact">hello@mirra.ai<br>Mirra Technologies Inc.<br>2261 Market St, San Francisco CA</div>
+      </div>
+      <div><p class="fc-title">Product</p><ul class="fc-links"><li><a href="#">Features</a></li><li><a href="#">Pricing</a></li><li><a href="#">Changelog</a></li><li><a href="#">API Docs</a></li></ul></div>
+      <div><p class="fc-title">Company</p><ul class="fc-links"><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Careers</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><p class="fc-title">Legal</p><ul class="fc-links"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Security</a></li><li><a href="#">GDPR</a></li></ul></div>
+    </div>
+    <div class="foot-bottom">
+      <p class="foot-copy">© 2026 Mirra Technologies Inc. All rights reserved.</p>
+      <div class="foot-badges">
+        <span class="fb-badge"><svg viewBox="0 0 12 12" fill="none"><rect x="2.5" y="5.5" width="7" height="5" rx="1" stroke="currentColor" stroke-width="1"/><path d="M4 5.5V4a2 2 0 014 0v1.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>SOC 2</span>
+        <span class="fb-badge"><svg viewBox="0 0 12 12" fill="none"><path d="M6 1L2 2.5v3.5C2 9 3.8 10.8 6 11c2.2-.2 4-2 4-4.5V2.5L6 1z" stroke="currentColor" stroke-width="1"/></svg>GDPR</span>
+        <span class="fb-badge"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M6 3.5v2.5l1.5 1" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>99.9% Uptime</span>
+      </div>
+    </div>
+  </div>
+</footer>
+</div><!-- end pg-land -->
+
+
+<style>
+/* ── AUTH PAGES ── */
+.auth-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column}
+.auth-page.show{display:flex}
+.onb-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--gray-50);flex-direction:column}
+.onb-page.show{display:flex}
+.auth-back{position:fixed;top:20px;left:24px;display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);cursor:pointer;text-decoration:none;padding:8px 12px;border-radius:var(--r);transition:all 0.15s}
+.auth-back:hover{color:var(--text);background:var(--gray-200)}
+.auth-back svg{width:14px;height:14px}
+.auth-card{width:100%;max-width:420px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-2xl);padding:40px;box-shadow:var(--shadow-xl)}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.auth-h{font-size:26px;font-weight:400;letter-spacing:-0.5px;margin-bottom:6px;color:var(--navy-900)}
+.auth-sub{font-size:14px;color:var(--text-muted);margin-bottom:28px}
+.auth-sub a{color:var(--cyan-dark);text-decoration:none;cursor:pointer;font-weight:500}
+.auth-sub a:hover{text-decoration:underline}
+.form-grp{margin-bottom:16px}
+.google-btn{width:100%;background:var(--white);border:1.5px solid var(--border-strong);border-radius:var(--r);padding:12px 16px;font-family:inherit;font-size:14px;color:var(--gray-700);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all 0.15s;margin-bottom:20px}
+.google-btn:hover{background:var(--gray-50);border-color:var(--gray-400)}
+.divider{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.div-line{flex:1;height:1px;background:var(--border)}
+.div-txt{font-size:12px;color:var(--gray-400)}
+.auth-submit{width:100%;background:var(--navy-900);color:white;border:none;border-radius:var(--r);padding:13px;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:opacity 0.15s;letter-spacing:-0.1px;margin-top:4px}
+.auth-submit:hover{opacity:0.88}
+.auth-submit:disabled{opacity:0.5;cursor:not-allowed}
+.auth-fine{font-size:12px;color:var(--gray-400);text-align:center;margin-top:16px;line-height:1.6}
+.auth-fine a{color:var(--cyan-dark);text-decoration:none;cursor:pointer}
+
+/* ── ONBOARDING ── */
+.onb-page.show{display:flex}
+.onb-card{width:100%;max-width:680px;background:var(--white);border:1px solid var(--border);border-radius:var(--r-2xl);padding:44px;box-shadow:var(--shadow-xl)}
+.onb-progress{display:flex;align-items:center;gap:8px;margin-bottom:32px}
+.onb-step{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid var(--border);color:var(--gray-400);transition:all 0.2s}
+.onb-step.active{border-color:var(--navy-900);background:var(--navy-900);color:white}
+.onb-step.done{border-color:var(--green);background:var(--green);color:var(--navy-900)}
+.onb-step-line{flex:1;height:2px;background:var(--border);border-radius:2px}
+.onb-step-line.done{background:var(--green)}
+.onb-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.onb-wide{grid-column:1/-1}
+.form-ta{width:100%;min-height:96px;background:var(--gray-50);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;resize:vertical}
+.form-ta:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-light)}
+.form-ta::placeholder{color:var(--gray-400)}
+.onb-actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:28px}
+.onb-tip{font-size:13px;color:var(--gray-400);max-width:340px;line-height:1.6}
+.onb-tip strong{color:var(--text-muted)}
+.onb-cta{min-width:200px;background:var(--navy-900);color:white;border:none;border-radius:var(--r);padding:13px 24px;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;transition:opacity 0.15s}
+.onb-cta:hover{opacity:0.88}
+.onb-cta:disabled{opacity:0.5;cursor:not-allowed}
+.onb-skip{font-size:13px;color:var(--gray-400);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:inherit}
+.onb-skip:hover{color:var(--text-muted)}
+</style>
+
+<!-- ═══════ LOGIN ═══════ -->
+<div id="pg-login" class="auth-page page">
+  <a class="auth-back" onclick="goTo('land')">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="tn-mark"><svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg></div>
+      <span class="tn-name">Mirra</span>
+    </div>
+    <h2 class="auth-h">Welcome back</h2>
+    <p class="auth-sub">No account? <a onclick="goTo('signup')">Sign up free →</a></p>
+    <div class="form-grp">
+      <label class="label">Email</label>
+      <input class="input" type="email" id="li-email" placeholder="you@company.com" autocomplete="email">
+    </div>
+    <div class="form-grp">
+      <label class="label">Password</label>
+      <input class="input" type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="auth-submit" id="login-submit" onclick="doLogin()">Sign in to Mirra</button>
+    <p class="auth-fine"><a href="#">Forgot password?</a></p>
+  </div>
+</div>
+
+<!-- ═══════ SIGNUP ═══════ -->
+<div id="pg-signup" class="auth-page page">
+  <a class="auth-back" onclick="goTo('land')">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="tn-mark"><svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg></div>
+      <span class="tn-name">Mirra</span>
+    </div>
+    <h2 class="auth-h">Start for free</h2>
+    <p class="auth-sub">Have an account? <a onclick="goTo('login')">Sign in →</a></p>
+    <div class="form-grp">
+      <label class="label">Full name</label>
+      <input class="input" type="text" id="su-name" placeholder="Your name" autocomplete="name">
+    </div>
+    <div class="form-grp">
+      <label class="label">Work email</label>
+      <input class="input" type="email" id="su-email" placeholder="you@company.com" autocomplete="email">
+    </div>
+    <div class="form-grp">
+      <label class="label">Password</label>
+      <input class="input" type="password" id="su-pass" placeholder="Min. 8 characters" autocomplete="new-password">
+    </div>
+    <button class="auth-submit" id="signup-submit" onclick="doSignup()">Create free account</button>
+    <p class="auth-fine">By signing up you agree to our <a href="#">Terms</a> &amp; <a href="#">Privacy Policy</a></p>
+  </div>
+</div>
+
+<!-- ═══════ ONBOARDING ═══════ -->
+<div id="pg-onboard" class="onb-page page">
+  <a class="auth-back" onclick="goTo('signup')">
+    <svg viewBox="0 0 14 14" fill="none"><path d="M9 2.5L4.5 7 9 11.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <div class="onb-card">
+    <div class="auth-logo">
+      <div class="tn-mark"><svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg></div>
+      <span class="tn-name">Mirra</span>
+    </div>
+    <div class="onb-progress">
+      <div class="onb-step done">✓</div>
+      <div class="onb-step-line done"></div>
+      <div class="onb-step active">2</div>
+      <div class="onb-step-line"></div>
+      <div class="onb-step">3</div>
+    </div>
+    <h2 class="auth-h">Tell us about your brand</h2>
+    <p class="auth-sub" style="margin-bottom:28px">Mirra uses this to make every competitive insight relevant to <em>your</em> market — not just generic observations.</p>
+    <div class="onb-grid">
+      <div class="form-grp">
+        <label class="label">Your website</label>
+        <input class="input" type="url" id="ob-website" placeholder="https://yourbusiness.com">
+      </div>
+      <div class="form-grp">
+        <label class="label">What do you sell?</label>
+        <input class="input" type="text" id="ob-product" placeholder="e.g. AI analytics for SaaS">
+      </div>
+      <div class="form-grp onb-wide">
+        <label class="label">Who are you trying to reach?</label>
+        <input class="input" type="text" id="ob-audience" placeholder="e.g. Growth teams at Series A SaaS companies">
+      </div>
+      <div class="form-grp onb-wide">
+        <label class="label">Your #1 growth goal right now</label>
+        <textarea class="form-ta" id="ob-goals" placeholder="e.g. Get our first 100 paying customers and tighten our homepage positioning against Competitor X."></textarea>
+      </div>
+      <div class="form-grp onb-wide">
+        <label class="label">Priority channels</label>
+        <input class="input" type="text" id="ob-channels" placeholder="e.g. SEO, LinkedIn, cold outreach, landing pages">
+      </div>
+    </div>
+    <div class="onb-actions">
+      <button class="onb-skip" onclick="skipOnboarding()">Skip for now</button>
+      <button class="onb-cta" id="onboard-submit" onclick="saveOnboarding()">
+        Save &amp; start analyzing
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="margin-left:4px"><path d="M2.5 7h9M8 3.5l3.5 3.5L8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<style>
+/* ── APP SHELL ── */
+#pg-app{height:100vh;overflow:hidden}
+.app-sidebar{
+  width:248px;flex-shrink:0;
+  background:var(--navy-950);
+  display:flex;flex-direction:column;height:100vh;overflow:hidden;
+}
+.sb-top{
+  padding:16px;border-bottom:1px solid rgba(255,255,255,0.06);
+  display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.sb-logo-mark{width:30px;height:30px;background:rgba(17,199,255,0.15);border:1px solid rgba(17,199,255,0.25);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-mark svg{width:16px;height:16px}
+.sb-logo-name{font-family:'Fraunces',serif;font-size:17px;font-weight:400;color:white;letter-spacing:-0.3px}
+.sb-newbtn{
+  margin:12px 12px 6px;
+  background:var(--cyan);color:var(--navy-950);
+  border:none;border-radius:var(--r);padding:10px 14px;
+  font-family:inherit;font-size:13px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;gap:7px;
+  transition:opacity 0.15s;width:calc(100% - 24px);
+}
+.sb-newbtn:hover{opacity:0.88}
+.sb-newbtn svg{width:13px;height:13px}
+.sb-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.25);padding:10px 16px 4px;font-weight:500}
+.sb-nav{list-style:none;padding:0 8px}
+.sb-nav li a{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:var(--r);font-size:13px;color:rgba(255,255,255,0.5);
+  text-decoration:none;font-weight:400;transition:all 0.15s;cursor:pointer;
+}
+.sb-nav li a:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.85)}
+.sb-nav li a.on{background:rgba(17,199,255,0.12);color:var(--cyan)}
+.sb-nav li a svg{width:15px;height:15px;flex-shrink:0;opacity:0.6}
+.sb-nav li a.on svg{opacity:1}
+.sb-recents{flex:1;overflow-y:auto;padding:0 8px 8px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent}
+.sb-recents::-webkit-scrollbar{width:3px}
+.sb-recents::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.sb-ritem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:background 0.15s}
+.sb-ritem:hover{background:rgba(255,255,255,0.05)}
+.sb-ricon{width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-ricon svg{width:11px;height:11px;color:rgba(255,255,255,0.4)}
+.sb-rdomain{font-size:13px;color:rgba(255,255,255,0.55);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-rscore{font-size:11px;font-weight:500;padding:2px 6px;border-radius:4px;flex-shrink:0}
+.srs-g{background:var(--green-light);color:var(--green-dark)}
+.srs-a{background:var(--amber-light);color:var(--amber)}
+.srs-r{background:var(--red-light);color:var(--red)}
+.sb-user{
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:12px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.sb-uav{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:white;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:500;color:rgba(255,255,255,0.8);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-uplan{font-size:11px;color:rgba(255,255,255,0.3)}
+.sb-logout{background:none;border:none;cursor:pointer;padding:5px;border-radius:var(--r-sm);color:rgba(255,255,255,0.3);transition:all 0.15s;display:flex;align-items:center}
+.sb-logout:hover{color:var(--red);background:var(--red-light)}
+.sb-logout svg{width:14px;height:14px}
+
+/* ── APP MAIN ── */
+.app-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--gray-50)}
+.app-bar{
+  height:56px;flex-shrink:0;background:var(--white);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 28px;justify-content:space-between;
+}
+.ab-title{font-size:15px;font-weight:600;letter-spacing:-0.2px;color:var(--navy-900)}
+.ab-right{display:flex;align-items:center;gap:10px}
+.ab-badge{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;background:var(--green-light);color:var(--green-dark)}
+.ab-count{font-size:13px;color:var(--text-muted)}
+.app-view{display:none;flex:1;overflow-y:auto}
+.app-view.on{display:block}
+#view-cmo.on{display:flex;flex-direction:column}
+
+/* ── DASHBOARD ── */
+.dash-pad{padding:28px}
+.dsh-greet{margin-bottom:24px}
+.dsh-greet h2{font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:4px;color:var(--navy-900)}
+.dsh-greet p{font-size:14px;color:var(--text-muted)}
+.url-panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:22px 24px;margin-bottom:24px;box-shadow:var(--shadow-sm)}
+.url-panel-lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:12px}
+.url-panel-row{display:flex;gap:10px}
+.up-inp{flex:1;background:var(--gray-50);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;transition:all 0.2s;min-width:0}
+.up-inp:focus{border-color:var(--cyan);box-shadow:0 0 0 3px var(--cyan-light);background:var(--white)}
+.up-inp::placeholder{color:var(--gray-400)}
+.up-btn{background:var(--navy-900);color:white;border:none;border-radius:var(--r);padding:12px 22px;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all 0.15s;display:flex;align-items:center;gap:7px;flex-shrink:0}
+.up-btn:hover{background:var(--navy-800);transform:translateY(-1px)}
+.up-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.up-btn svg{width:14px;height:14px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px}
+.stat-ico{width:36px;height:36px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat-ico svg{width:18px;height:18px}
+.stat-val{font-family:'Fraunces',serif;font-size:30px;font-weight:300;letter-spacing:-1px;line-height:1;margin-bottom:4px;color:var(--navy-900)}
+.stat-lbl{font-size:12px;color:var(--gray-400)}
+.recent-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden}
+.rb-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.rb-hd-t{font-size:14px;font-weight:600;letter-spacing:-0.2px;color:var(--navy-900)}
+.rb-hd-a{font-size:13px;color:var(--cyan-dark);cursor:pointer;font-weight:500}
+.rt{width:100%;border-collapse:collapse}
+.rt thead th{background:var(--gray-50);padding:10px 18px;font-size:11px;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);font-weight:600;text-align:left;border-bottom:1px solid var(--border)}
+.rt tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s}
+.rt tbody tr:last-child{border-bottom:none}
+.rt tbody tr:hover{background:var(--gray-50)}
+.rt tbody td{padding:13px 18px;font-size:13px;vertical-align:middle}
+.rt-dm{display:flex;align-items:center;gap:10px;font-weight:500;color:var(--navy-900)}
+.rt-fav{width:24px;height:24px;border-radius:6px;background:var(--gray-100);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rt-fav svg{width:12px;height:12px;color:var(--gray-400)}
+.rt-mut{color:var(--text-muted);font-size:12px}
+.rt-sc{display:flex;align-items:center;gap:8px}
+.rt-bar{width:56px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.rt-bar-f{height:100%;border-radius:2px}
+.rt-tag{font-size:11px;font-weight:500;padding:3px 8px;border-radius:4px}
+.empty-state{padding:60px;text-align:center}
+.empty-state svg{width:40px;height:40px;color:var(--gray-300);margin-bottom:14px}
+.empty-state h3{font-size:20px;font-weight:400;letter-spacing:-0.3px;margin-bottom:8px;color:var(--navy-900)}
+.empty-state p{font-size:14px;color:var(--text-muted)}
+
+/* ── LOADING VIEW ── */
+.load-view{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.load-inner{max-width:400px}
+.load-radar{position:relative;width:96px;height:96px;margin:0 auto 24px;border-radius:50%;background:radial-gradient(circle at 35% 35%,rgba(24,234,197,0.2),rgba(17,199,255,0.06) 45%,rgba(15,31,56,0.04) 75%);border:1px solid rgba(17,199,255,0.15)}
+.load-radar::before,.load-radar::after{content:'';position:absolute;inset:14px;border:1px solid rgba(17,199,255,0.2);border-radius:50%;animation:radarPulse 2.8s ease-out infinite}
+.load-radar::after{inset:28px;animation-delay:0.9s}
+.load-radar-eye{position:absolute;left:50%;top:50%;width:22px;height:22px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--cyan) 0%,rgba(17,199,255,0.2) 100%);box-shadow:0 0 20px rgba(17,199,255,0.5)}
+.load-radar-sweep{position:absolute;inset:-4px;border-radius:50%;background:conic-gradient(from 210deg,transparent 0deg,transparent 250deg,rgba(17,199,255,0) 285deg,rgba(17,199,255,0.3) 320deg,rgba(24,234,197,0) 360deg);animation:radarSpin 3.2s linear infinite;mix-blend-mode:screen}
+@keyframes radarSpin{to{transform:rotate(360deg)}}
+@keyframes radarPulse{0%{opacity:0.2;transform:scale(0.9)}60%{opacity:0.5}100%{opacity:0;transform:scale(1.15)}}
+.load-ttl{font-family:'Fraunces',serif;font-size:22px;font-weight:300;letter-spacing:-0.5px;margin-bottom:8px;color:var(--navy-900)}
+.load-sub{font-size:14px;color:var(--text-muted);margin-bottom:28px}
+.load-steps{display:flex;flex-direction:column;gap:10px;text-align:left;max-width:260px;margin:0 auto}
+.ls{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-muted)}
+.ls-d{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background 0.3s}
+.ls-d.active{background:var(--cyan);animation:pulse 0.8s infinite}
+.ls-d.done{background:var(--green);animation:none}
+
+/* ── RESULT VIEW ── */
+.result-pad{padding:24px 28px}
+.res-header{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:22px 26px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;box-shadow:var(--shadow-sm)}
+.rh-domain{font-family:'Fraunces',serif;font-size:26px;font-weight:300;letter-spacing:-0.5px;margin-bottom:5px;color:var(--navy-900)}
+.rh-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rh-m{font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:4px}
+.rh-m svg{width:12px;height:12px}
+.rh-sep{width:3px;height:3px;border-radius:50%;background:var(--border-strong)}
+.rh-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rha{display:flex;align-items:center;gap:6px;background:var(--gray-50);border:1px solid var(--border-strong);border-radius:var(--r);padding:8px 14px;font-family:inherit;font-size:13px;font-weight:500;color:var(--gray-700);cursor:pointer;transition:all 0.15s}
+.rha:hover{background:var(--gray-100)}
+.rha svg{width:13px;height:13px}
+.rha-primary{background:var(--navy-900);color:white;border-color:transparent}
+.rha-primary:hover{background:var(--navy-800)}
+.score-ring{width:68px;height:68px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2.5px solid var(--border);flex-shrink:0}
+.sr-n{font-family:'Fraunces',serif;font-size:22px;font-weight:300;letter-spacing:-0.8px;line-height:1;color:var(--navy-900)}
+.sr-l{font-size:9px;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-400);margin-top:2px}
+.res-grid{display:grid;grid-template-columns:1fr 360px;gap:16px;align-items:start}
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.panel-hd{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px}
+.panel-hd-ico{width:26px;height:26px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.panel-hd-ico svg{width:13px;height:13px}
+.panel-hd-t{font-size:14px;font-weight:600;letter-spacing:-0.2px;color:var(--navy-900)}
+.panel-body{padding:16px 18px}
+.comp-items{display:flex;flex-direction:column;gap:8px}
+.comp-item{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);transition:border-color 0.15s}
+.comp-item:hover{border-color:var(--border-strong)}
+.ci-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.ci-name{font-size:13px;font-weight:500;letter-spacing:-0.1px;margin-bottom:2px;color:var(--navy-900)}
+.ci-detail{font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ci-badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;white-space:nowrap;flex-shrink:0}
+.cb-g{background:var(--green-light);color:var(--green-dark)}
+.cb-a{background:var(--amber-light);color:var(--amber)}
+.cb-r{background:var(--red-light);color:var(--red)}
+.cb-b{background:var(--cyan-light);color:var(--cyan-dark)}
+.insight-items{display:flex;flex-direction:column;gap:8px}
+.insight-item{display:flex;gap:10px;align-items:flex-start;padding:13px;background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);transition:border-color 0.15s}
+.insight-item:hover{border-color:var(--border-strong)}
+.ii-ico{width:30px;height:30px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ii-ico svg{width:14px;height:14px}
+.ii-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.ii-txt{font-size:13px;color:var(--gray-700);line-height:1.55}
+.ii-action{font-size:11px;font-weight:500;padding:4px 10px;border-radius:6px;border:none;font-family:inherit;cursor:pointer;align-self:center;flex-shrink:0;white-space:nowrap}
+.ia-g{background:var(--green-light);color:var(--green-dark)}
+.ia-r{background:var(--red-light);color:var(--red)}
+.ia-a{background:var(--amber-light);color:var(--amber)}
+.sb-rows{display:flex;flex-direction:column;gap:11px}
+.sbr{display:flex;align-items:center;gap:10px}
+.sbr-l{font-size:13px;color:var(--gray-700);width:110px;flex-shrink:0}
+.sbr-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.sbr-fill{height:100%;border-radius:3px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+.sbr-n{font-size:12px;font-weight:500;width:30px;text-align:right;flex-shrink:0;color:var(--navy-900)}
+.sum-bar{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:16px 20px;margin-bottom:16px;font-size:14px;color:var(--gray-700);line-height:1.7;box-shadow:var(--shadow-sm)}
+.sum-bar strong{color:var(--navy-900);font-weight:600}
+
+/* ── CMO VIEW ── */
+.cmo-pad{padding:28px;max-width:1080px}
+.cmo-header{margin-bottom:28px}
+.cmo-header h2{font-size:28px;font-weight:300;letter-spacing:-0.5px;margin-bottom:6px;color:var(--navy-900)}
+.cmo-header p{font-size:14px;color:var(--text-muted)}
+.cmo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.cmo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--shadow-sm)}
+.cmo-card-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.cmo-card-ico{width:28px;height:28px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cmo-card-ico svg{width:14px;height:14px}
+.cmo-card-t{font-size:14px;font-weight:600;letter-spacing:-0.2px;color:var(--navy-900)}
+.cmo-card-body{padding:18px 20px}
+.cmo-wide{grid-column:1/-1}
+.cmo-exp-card{background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;margin-bottom:10px}
+.cmo-exp-title{font-size:14px;font-weight:600;color:var(--navy-900);margin-bottom:6px}
+.cmo-exp-why{font-size:13px;color:var(--text-muted);margin-bottom:10px;line-height:1.55}
+.cmo-exp-steps{display:flex;flex-direction:column;gap:5px}
+.cmo-exp-step{font-size:13px;color:var(--gray-700);display:flex;gap:8px;align-items:flex-start}
+.cmo-exp-step::before{content:'→';color:var(--cyan-dark);flex-shrink:0;font-weight:600}
+.cmo-copy-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:5px 12px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--white);color:var(--text-muted);cursor:pointer;transition:all 0.15s;font-family:inherit;margin-top:10px}
+.cmo-copy-btn:hover{background:var(--navy-900);color:white;border-color:var(--navy-900)}
+</style>
+
+
+<!-- ═══════ APP ═══════ -->
+<div id="pg-app" class="page">
+  <!-- Sidebar -->
+  <aside class="app-sidebar">
+    <div class="sb-top">
+      <div class="sb-logo-mark">
+        <svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+      </div>
+      <span class="sb-logo-name">Mirra</span>
+    </div>
+
+    <button class="sb-newbtn" onclick="focusDash()">
+      <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      New analysis
+    </button>
+
+    <div class="sb-section">Navigation</div>
+    <ul class="sb-nav">
+      <li><a id="nav-dash" class="on" onclick="switchView('dash')">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+        Dashboard
+      </a></li>
+      <li><a id="nav-result" onclick="switchView('result')" style="display:none">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M5.5 8l2 2 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Last result
+      </a></li>
+      <li><a id="nav-cmo" onclick="switchView('cmo')" style="display:none">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 12l4-4 3 3 5-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        AI Strategist
+      </a></li>
+      <li><a id="nav-watchlist" onclick="switchView('watchlist')">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Watchlist
+      </a></li>
+      <li><a id="nav-batch" onclick="switchView('batch')">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Batch scan
+      </a></li>
+    </ul>
+
+    <div class="sb-section">Recent analyses</div>
+    <div class="sb-recents" id="sb-recents-list"></div>
+
+    <div class="sb-user">
+      <div class="sb-uav" id="sb-uav">U</div>
+      <div style="flex:1;min-width:0">
+        <div class="sb-uname" id="sb-uname">User</div>
+        <div class="sb-uplan">Free plan</div>
+      </div>
+      <button class="sb-logout" onclick="doLogout()" title="Sign out">
+        <svg viewBox="0 0 14 14" fill="none"><path d="M9 2h2a1 1 0 011 1v8a1 1 0 01-1 1H9M6 10l3-3-3-3M9 7H2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="app-main">
+    <div class="app-bar">
+      <span class="ab-title" id="ab-title">Dashboard</span>
+      <div class="ab-right">
+        <span class="ab-badge" id="ab-badge">Free</span>
+        <span class="ab-count" id="ab-count">3 analyses remaining</span>
+      </div>
+    </div>
+
+    <!-- Dashboard view -->
+    <div class="app-view on" id="view-dash">
+      <div class="dash-pad">
+        <div class="dsh-greet">
+          <h2>Good morning, <span id="greet-name">there</span> 👋</h2>
+          <p>Your market intelligence hub. Analyze a competitor to get started.</p>
+        </div>
+
+        <div class="url-panel">
+          <div class="url-panel-lbl">Analyze a competitor</div>
+          <div class="url-panel-row">
+            <input class="up-inp" id="dash-url" type="url" placeholder="https://competitor.com — paste any URL">
+            <button class="up-btn" id="analyze-btn" onclick="startAnalysis()">
+              <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="4"/><path d="M10 10l2.5 2.5"/></svg>
+              Analyze
+            </button>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <div class="stat-ico" style="background:var(--cyan-light)"><svg viewBox="0 0 18 18" fill="none" stroke="var(--cyan-dark)" stroke-width="1.4" stroke-linecap="round"><circle cx="9" cy="9" r="6"/><path d="M9 5v3M9 11v.5"/></svg></div>
+            <div class="stat-val" id="stat-total">0</div>
+            <div class="stat-lbl">Analyses run</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-ico" style="background:var(--green-light)"><svg viewBox="0 0 18 18" fill="none" stroke="var(--green-dark)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l4-4 3 3 5-6"/></svg></div>
+            <div class="stat-val" id="stat-avg">—</div>
+            <div class="stat-lbl">Avg competitor score</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-ico" style="background:var(--red-light)"><svg viewBox="0 0 18 18" fill="none" stroke="var(--red)" stroke-width="1.4" stroke-linecap="round"><path d="M9 3v8M5 7l4-4 4 4"/></svg></div>
+            <div class="stat-val" id="stat-gaps">0</div>
+            <div class="stat-lbl">Gaps identified</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-ico" style="background:var(--purple-light)"><svg viewBox="0 0 18 18" fill="none" stroke="var(--purple)" stroke-width="1.4" stroke-linecap="round"><path d="M9 2l2.5 5 5.5.8-4 3.9.9 5.5L9 14.5l-4.9 2.7.9-5.5L1 7.8l5.5-.8z"/></svg></div>
+            <div class="stat-val" id="stat-left">3</div>
+            <div class="stat-lbl">Analyses remaining</div>
+          </div>
+        </div>
+
+        <div class="recent-box">
+          <div class="rb-hd">
+            <span class="rb-hd-t">Recent analyses</span>
+            <span class="rb-hd-a" onclick="focusDash()">+ New analysis</span>
+          </div>
+          <div id="recent-table-wrap">
+            <div class="empty-state">
+              <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.5"/><path d="M20 12v8M20 24v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              <h3>No analyses yet</h3>
+              <p>Paste a competitor URL above to run your first market intelligence scan.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading view -->
+    <div class="app-view" id="view-load">
+      <div class="load-view">
+        <div class="load-inner">
+          <div class="load-radar">
+            <div class="load-radar-eye"></div>
+            <div class="load-radar-sweep"></div>
+          </div>
+          <div class="load-ttl">Analyzing <span id="app-load-domain">competitor</span></div>
+          <p class="load-sub">Building your market intelligence report…</p>
+          <div class="load-steps">
+            <div class="ls"><span class="ls-d" id="as1"></span>Rendering page</div>
+            <div class="ls"><span class="ls-d" id="as2"></span>Identifying components</div>
+            <div class="ls"><span class="ls-d" id="as3"></span>Generating AI insights</div>
+            <div class="ls"><span class="ls-d" id="as4"></span>Building report</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result view -->
+    <div class="app-view" id="view-result">
+      <div class="result-pad" id="result-content"></div>
+    </div>
+
+    <!-- AI Agent view -->
+    <div class="app-view" id="view-cmo" style="display:none;flex-direction:column;height:100%">
+      <div id="agent-shell" style="display:flex;flex-direction:column;height:100%;background:var(--navy-950)">
+
+        <!-- Agent header -->
+        <div style="padding:16px 24px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;gap:14px;flex-shrink:0;background:rgba(13,27,42,0.95)">
+          <div style="position:relative">
+            <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,255,156,0.15));border:1px solid rgba(0,200,255,0.3);display:flex;align-items:center;justify-content:center">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+            </div>
+            <div style="position:absolute;bottom:1px;right:1px;width:10px;height:10px;border-radius:50%;background:#00FF9C;border:2px solid var(--navy-950)"></div>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:white;letter-spacing:-0.2px">Mirra Agent</div>
+            <div style="font-size:12px;color:rgba(0,200,255,0.7);display:flex;align-items:center;gap:5px">
+              <span style="width:6px;height:6px;border-radius:50%;background:#00FF9C;display:inline-block;animation:pulse 2s infinite"></span>
+              Online · Market intelligence specialist
+            </div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px" id="agent-task-badges"></div>
+        </div>
+
+        <!-- Messages -->
+        <div id="agent-messages" style="flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.1) transparent"></div>
+
+        <!-- Suggested actions -->
+        <div id="agent-suggestions" style="padding:0 24px 12px;display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0"></div>
+
+        <!-- Input -->
+        <div style="padding:16px 24px 20px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:rgba(13,27,42,0.95)">
+          <div style="display:flex;gap:10px;align-items:flex-end;background:rgba(255,255,255,0.05);border:1px solid rgba(0,200,255,0.2);border-radius:12px;padding:10px 14px;transition:border-color 0.2s" id="agent-input-wrap">
+            <textarea id="agent-input" rows="1" placeholder="Ask Mirra anything about your market, competitors, or strategy…" style="flex:1;background:none;border:none;outline:none;color:white;font-family:inherit;font-size:14px;resize:none;line-height:1.5;max-height:120px;overflow-y:auto;scrollbar-width:none" onkeydown="agentKeydown(event)" oninput="autoResize(this)"></textarea>
+            <button onclick="sendAgentMessage()" id="agent-send" style="width:34px;height:34px;border-radius:8px;background:var(--cyan);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.15s">
+              <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M13 7.5L2 2l2.5 5.5L2 13l11-5.5z" fill="#0D1B2A"/></svg>
+            </button>
+          </div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:8px;text-align:center">Mirra Agent can run tasks, generate reports, and take action on your behalf</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Watchlist view -->
+    <div class="app-view" id="view-watchlist">
+      <div class="dash-pad">
+        <div class="dsh-greet">
+          <h2>Competitor Watchlist</h2>
+          <p>Monitor competitors weekly — get alerts when their copy, pricing, or CTAs change.</p>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px 24px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">Add to watchlist</div>
+          <div style="display:flex;gap:10px">
+            <input class="up-inp" id="watchlist-url" type="url" placeholder="https://competitor.com">
+            <button class="up-btn" onclick="toast('Watchlist feature coming soon!')">
+              <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Add
+            </button>
+          </div>
+        </div>
+        <div class="empty-state">
+          <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.5"/><path d="M20 12v8M20 24v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <h3>No competitors tracked yet</h3>
+          <p>Add competitors above to get weekly change alerts.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Batch scan view -->
+    <div class="app-view" id="view-batch">
+      <div class="dash-pad">
+        <div class="dsh-greet">
+          <h2>Batch Scan</h2>
+          <p>Paste up to 10 URLs — get a ranked threat matrix in one shot.</p>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:20px 24px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:12px">Paste URLs (one per line)</div>
+          <textarea style="width:100%;min-height:200px;background:var(--gray-50);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:14px;padding:12px 14px;outline:none;resize:vertical" placeholder="https://competitor1.com&#10;https://competitor2.com&#10;https://competitor3.com"></textarea>
+          <button class="up-btn" style="margin-top:12px" onclick="toast('Batch scan feature coming soon!')">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6" cy="6" r="4"/><path d="M10 10l2.5 2.5"/></svg>
+            Scan all
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toastEl"></div>
+
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+window.MIRRA_BACKEND_URL = 'http://127.0.0.1:3010';
+
+// ── STATE ───────────────────────────────────────────────
+const S = { user: null, analyses: [], left: 3, pendingUrl: '' };
+
+function getBackendBase() {
+  return (window.MIRRA_BACKEND_URL || localStorage.getItem('mirra_backend_url') || window.location.origin).replace(/\/+$/, '');
+}
+
+async function apiPost(endpoint, payload) {
+  const res = await fetch(getBackendBase() + endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || data.success === false) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+function rememberUser(user) {
+  S.user = user;
+  sessionStorage.setItem('mirra_user', JSON.stringify(user));
+}
+
+function stashPendingUrl(v) {
+  S.pendingUrl = v;
+  sessionStorage.setItem('mirra_pending_url', v);
+}
+
+function consumePendingUrl() {
+  const v = S.pendingUrl || sessionStorage.getItem('mirra_pending_url') || '';
+  S.pendingUrl = '';
+  sessionStorage.removeItem('mirra_pending_url');
+  return v;
+}
+
+function hasOnboarding(user) {
+  return !!(user && user.profile && (user.profile.website || user.profile.goals));
+}
+
+// ── TOAST ───────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toastEl');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('on'), 3000);
+}
+
+// ── PAGE NAV ────────────────────────────────────────────
+function goTo(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('show'));
+  const pg = document.getElementById('pg-' + p);
+  if (!pg) return;
+  pg.classList.add('show');
+  window.scrollTo(0, 0);
+  closeMob();
+}
+
+function tryRestoreSession() {
+  const u = sessionStorage.getItem('mirra_user');
+  if (u) {
+    try { S.user = JSON.parse(u); routeAfterAuth(false); } catch (e) {}
+  }
+}
+
+// ── MOBILE MENU ─────────────────────────────────────────
+function toggleMob() { document.getElementById('mobNav').classList.toggle('open'); }
+function closeMob() { document.getElementById('mobNav')?.classList.remove('open'); }
+
+// ── LANDING INPUTS ───────────────────────────────────────
+function fctaGo() {
+  const v = document.getElementById('fctaEmail').value.trim();
+  if (!v) { document.getElementById('fctaEmail').focus(); return; }
+  goTo('signup');
+  setTimeout(() => { const e = document.getElementById('su-email'); if (e) e.value = v; }, 100);
+}
+
+// ── AUTH ────────────────────────────────────────────────
+function setAuthBusy(id, busy, label) {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+  btn.disabled = !!busy;
+  btn.textContent = busy ? label : btn.dataset.label;
+}
+
+function routeAfterAuth(showToast) {
+  if (!S.user) { goTo('land'); return; }
+  if (!hasOnboarding(S.user)) {
+    goTo('onboard');
+    return;
+  }
+  bootApp();
+  goTo('app');
+  const pending = consumePendingUrl();
+  if (pending) {
+    document.getElementById('dash-url').value = pending;
+    switchView('dash');
+    setTimeout(() => startAnalysis(), 200);
+  } else {
+    switchView('dash');
+    setTimeout(() => document.getElementById('dash-url')?.focus(), 100);
+  }
+  if (showToast) toast(`Welcome back, ${(S.user.name || '').split(' ')[0] || 'there'} 👋`);
+}
+
+async function doLogin() {
+  const e = document.getElementById('li-email').value.trim();
+  const p = document.getElementById('li-pass').value;
+  if (!e || !p) { toast('Please fill in all fields'); return; }
+  setAuthBusy('login-submit', true, 'Signing in…');
+  try {
+    const data = await apiPost('/auth/login', { email: e, password: p });
+    rememberUser(data.user);
+    routeAfterAuth(true);
+  } catch (err) {
+    toast(err.message || 'Could not sign you in');
+  } finally {
+    setAuthBusy('login-submit', false);
+  }
+}
+
+async function doSignup() {
+  const n = document.getElementById('su-name').value.trim();
+  const e = document.getElementById('su-email').value.trim();
+  const p = document.getElementById('su-pass').value;
+  if (!n || !e || !p) { toast('Please fill in all fields'); return; }
+  if (p.length < 8) { toast('Password needs 8+ characters'); return; }
+  setAuthBusy('signup-submit', true, 'Creating account…');
+  try {
+    const data = await apiPost('/auth/signup', { name: n, email: e, password: p });
+    rememberUser(data.user);
+    // Always go to onboarding after signup
+    goTo('onboard');
+  } catch (err) {
+    toast(err.message || 'Could not create your account');
+  } finally {
+    setAuthBusy('signup-submit', false);
+  }
+}
+
+async function saveOnboarding() {
+  if (!S.user?.email) { toast('Please sign in again.'); goTo('login'); return; }
+  const profile = {
+    website: document.getElementById('ob-website').value.trim(),
+    productType: document.getElementById('ob-product').value.trim(),
+    audience: document.getElementById('ob-audience').value.trim(),
+    goals: document.getElementById('ob-goals').value.trim(),
+    channels: document.getElementById('ob-channels').value.trim()
+  };
+  if (!profile.website && !profile.goals) {
+    toast('Add at least your website or growth goal');
+    return;
+  }
+  const btn = document.getElementById('onboard-submit');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const data = await apiPost('/auth/profile', { email: S.user.email, profile });
+    rememberUser(data.user);
+    bootApp(); goTo('app'); switchView('dash');
+    toast('Brand profile saved — insights are now personalized to you ✓');
+  } catch (err) {
+    toast(err.message || 'Could not save profile');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save & start analyzing →';
+  }
+}
+
+function skipOnboarding() {
+  if (!S.user) return;
+  bootApp(); goTo('app'); switchView('dash');
+  setTimeout(() => toast('Tip: Complete your brand profile for personalized insights'), 1000);
+}
+
+function doLogout() {
+  S.user = null; S.analyses = [];
+  sessionStorage.removeItem('mirra_user');
+  sessionStorage.removeItem('mirra_pending_url');
+  goTo('land'); toast('Signed out');
+}
+
+// ── APP BOOT ────────────────────────────────────────────
+function bootApp() {
+  const first = (S.user.name || '').split(' ')[0];
+  document.getElementById('greet-name').textContent = first || 'there';
+  document.getElementById('sb-uname').textContent = S.user.name || 'User';
+  document.getElementById('sb-uav').textContent = (S.user.name || 'U')[0].toUpperCase();
+  document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
+  document.getElementById('stat-left').textContent = S.left;
+  updateStats(); renderSidebar(); renderTable();
+}
+
+function focusDash() { switchView('dash'); setTimeout(() => document.getElementById('dash-url')?.focus(), 100); }
+
+// ── APP VIEWS ────────────────────────────────────────────
+
+// ── STATS & SIDEBAR ──────────────────────────────────────
+function updateStats() {
+  const total = S.analyses.length;
+  document.getElementById('stat-total').textContent = total;
+  if (total > 0) {
+    const avg = Math.round(S.analyses.reduce((s, a) => s + (a.result?.overallScore || 0), 0) / total);
+    document.getElementById('stat-avg').textContent = avg;
+    const gaps = S.analyses.reduce((s, a) => s + (a.result?.insights?.filter(i => i.type === 'gap').length || 0), 0);
+    document.getElementById('stat-gaps').textContent = gaps;
+  }
+}
+
+function renderSidebar() {
+  const el = document.getElementById('sb-recents-list');
+  if (!el) return;
+  if (!S.analyses.length) { el.innerHTML = '<div style="padding:8px 10px;font-size:12px;color:rgba(255,255,255,0.2)">No analyses yet</div>'; return; }
+  el.innerHTML = S.analyses.slice(0, 8).map((a, i) => {
+    const score = a.result?.overallScore || 0;
+    const cls = score >= 70 ? 'srs-g' : score >= 50 ? 'srs-a' : 'srs-r';
+    return `<div class="sb-ritem" onclick="loadAnalysis(${i})">
+      <div class="sb-ricon"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1"/><path d="M6 3v3l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></div>
+      <span class="sb-rdomain">${a.domain}</span>
+      <span class="sb-rscore ${cls}">${score}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderTable() {
+  const wrap = document.getElementById('recent-table-wrap');
+  if (!wrap) return;
+  if (!S.analyses.length) {
+    wrap.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" stroke="currentColor" stroke-width="1.5"/><path d="M20 12v8M20 24v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <h3>No analyses yet</h3>
+      <p>Paste a competitor URL above to run your first market intelligence scan.</p>
+    </div>`;
+    return;
+  }
+  wrap.innerHTML = `<table class="rt">
+    <thead><tr><th>Domain</th><th>Score</th><th>Threat</th><th>Date</th></tr></thead>
+    <tbody>${S.analyses.map((a, i) => {
+      const score = a.result?.overallScore || 0;
+      const barColor = score >= 70 ? 'var(--green)' : score >= 50 ? 'var(--amber)' : 'var(--red)';
+      const threat = a.result?.threatLevel || '—';
+      const tColor = threat === 'CRITICAL' ? 'cb-r' : threat === 'HIGH' ? 'cb-a' : threat === 'MEDIUM' ? 'cb-b' : 'cb-g';
+      const date = new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      return `<tr onclick="loadAnalysis(${i})">
+        <td><div class="rt-dm"><div class="rt-fav"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1"/></svg></div>${a.domain}</div></td>
+        <td><div class="rt-sc"><div class="rt-bar"><div class="rt-bar-f" style="width:${score}%;background:${barColor}"></div></div><span style="font-size:13px;font-weight:500;color:var(--navy-900)">${score}</span></div></td>
+        <td><span class="rt-tag ${tColor}">${threat}</span></td>
+        <td class="rt-mut">${date}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function shareReport() {
+  const entry = window._currentAnalysis;
+  if (!entry) return;
+  const text = `Mirra Analysis: ${entry.domain} — Score ${entry.result?.overallScore}/100\n${entry.result?.summary || ''}\n\nGenerated by Mirra`;
+  navigator.clipboard.writeText(text).then(() => toast('Report summary copied to clipboard ✓'));
+}
+
+function loadAnalysis(i) {
+  const entry = S.analyses[i];
+  if (!entry) return;
+  window._currentAnalysis = entry;
+  window._currentCmoNeedsLoad = true;
+  document.getElementById('nav-result').style.display = 'flex';
+  document.getElementById('nav-cmo').style.display = 'flex';
+  renderResult(entry);
+  switchView('result');
+}
+</script>
+
+
+<script>
+// ── ANALYSIS ────────────────────────────────────────────
+async function startAnalysis() {
+  let raw = document.getElementById('dash-url').value.trim();
+  if (!raw) { toast('Enter a URL to analyze'); document.getElementById('dash-url').focus(); return; }
+  if (!raw.startsWith('http')) raw = 'https://' + raw;
+  let domain;
+  try { domain = new URL(raw).hostname.replace('www.', ''); } catch { toast('Please enter a valid URL'); return; }
+  if (S.left <= 0) { toast('Free limit reached — upgrade to continue'); return; }
+
+  document.getElementById('app-load-domain').textContent = domain;
+  switchView('load');
+
+  const ids = ['as1', 'as2', 'as3', 'as4'];
+  let i = 0;
+  const t = setInterval(() => {
+    if (i > 0) document.getElementById(ids[i - 1]).className = 'ls-d done';
+    if (i < ids.length) { document.getElementById(ids[i]).className = 'ls-d active'; i++; }
+    else clearInterval(t);
+  }, 2200);
+
+  try {
+    const result = await callBackend(raw);
+    clearInterval(t);
+    ids.forEach(id => document.getElementById(id).className = 'ls-d done');
+    S.left--;
+    const entry = { id: 'local-' + Date.now(), url: raw, domain, result, date: new Date() };
+    S.analyses.unshift(entry);
+    window._currentAnalysis = entry;
+    window._currentCmoNeedsLoad = true;
+    document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
+    document.getElementById('stat-left').textContent = S.left;
+    updateStats(); renderSidebar(); renderTable();
+    document.getElementById('nav-result').style.display = 'flex';
+    document.getElementById('nav-cmo').style.display = 'flex';
+    renderResult(entry);
+    switchView('result');
+  } catch (err) {
+    clearInterval(t);
+    ids.forEach(id => document.getElementById(id).className = 'ls-d');
+    renderError(domain, err.message);
+    switchView('result');
+  }
+}
+
+async function callBackend(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 60000);
+  let res;
+  try {
+    res = await fetch(getBackendBase() + '/analyze', {
+      method: 'POST', signal: controller.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+  } catch (err) {
+    clearTimeout(timer);
+    if (err.name === 'AbortError') throw new Error('Request timed out. Try again.');
+    throw new Error('Backend unreachable. Check the server and try again.');
+  }
+  clearTimeout(timer);
+  const data = await res.json();
+  if (!res.ok || !data.success) throw new Error(data.error || 'Backend error ' + res.status);
+  return data.result;
+}
+
+// ── RENDER ERROR ─────────────────────────────────────────
+function renderError(domain, msg) {
+  document.getElementById('result-content').innerHTML = `
+    <div style="padding:60px 32px;max-width:560px;margin:0 auto;text-align:center">
+      <div style="width:52px;height:52px;border-radius:var(--r-lg);background:var(--red-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+        <svg viewBox="0 0 20 20" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" width="22" height="22"><circle cx="10" cy="10" r="8"/><path d="M10 6v5M10 14h.01"/></svg>
+      </div>
+      <h3 style="font-size:22px;font-weight:300;letter-spacing:-0.5px;margin-bottom:10px;color:var(--navy-900)">Analysis failed</h3>
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:8px">Domain: <strong>${domain}</strong></p>
+      <div style="background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;font-size:13px;color:var(--red);font-family:monospace;text-align:left;word-break:break-word;margin-bottom:24px">${msg}</div>
+      <button onclick="switchView('dash')" class="btn btn-primary">Try again</button>
+    </div>`;
+}
+
+// ── RENDER RESULT ────────────────────────────────────────
+function renderResult(entry) {
+  const r = entry.result;
+  const c = document.getElementById('result-content');
+  if (!c) return;
+  window._currentAnalysis = entry;
+
+  const threatColor = { CRITICAL: 'var(--red)', HIGH: 'var(--amber)', MEDIUM: 'var(--cyan-dark)', LOW: 'var(--green-dark)' }[r.threatLevel] || 'var(--gray-400)';
+  const threatBg = { CRITICAL: 'var(--red-light)', HIGH: 'var(--amber-light)', MEDIUM: 'var(--cyan-light)', LOW: 'var(--green-light)' }[r.threatLevel] || 'var(--gray-100)';
+
+  const components = (r.components || []).map(comp => {
+    const statusMap = { strong: { cls: 'cb-g', label: 'Strong' }, partial: { cls: 'cb-a', label: 'Partial' }, missing: { cls: 'cb-r', label: 'Missing' }, unknown: { cls: 'cb-b', label: 'Unknown' } };
+    const s = statusMap[comp.status] || statusMap.unknown;
+    return `<div class="comp-item">
+      <div class="ci-dot" style="background:${comp.color || '#ccc'}"></div>
+      <div style="flex:1;min-width:0">
+        <div class="ci-name">${comp.name}</div>
+        <div class="ci-detail">${comp.detail || ''}</div>
+      </div>
+      <span class="ci-badge ${s.cls}">${s.label}</span>
+    </div>`;
+  }).join('');
+
+  const insights = (r.insights || []).map(ins => {
+    const map = { steal: { cls: 'ico-steal', typeCls: 'ia-g', typeColor: 'var(--green-dark)', label: 'Steal this', svg: '<path d="M7 2v10M3 6l4-4 4 4"/>' }, gap: { cls: 'ico-gap', typeCls: 'ia-r', typeColor: 'var(--red)', label: 'Their gap', svg: '<path d="M7 12V2M3 8l4 4 4-4"/>' }, watch: { cls: 'ico-watch', typeCls: 'ia-a', typeColor: 'var(--amber)', label: 'Watch', svg: '<circle cx="7" cy="7" r="5"/><path d="M7 4.5v3l1.5 1.2"/>' } };
+    const m = map[ins.type] || map.watch;
+    return `<div class="insight-item">
+      <div class="ii-ico ${m.cls}"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${m.svg}</svg></div>
+      <div style="flex:1">
+        <div class="ii-type" style="color:${m.typeColor}">${m.label}</div>
+        <div class="ii-txt">${ins.text}</div>
+      </div>
+      <button class="ii-action ${m.typeCls}">${ins.action || 'Note'}</button>
+    </div>`;
+  }).join('');
+
+  const breakdown = r.scoreBreakdown || {};
+  const breakdownRows = Object.entries(breakdown).map(([k, v]) => {
+    const barColor = v >= 70 ? 'var(--green)' : v >= 50 ? 'var(--amber)' : 'var(--red)';
+    return `<div class="sbr">
+      <span class="sbr-l">${k}</span>
+      <div class="sbr-track"><div class="sbr-fill" style="width:${v}%;background:${barColor}"></div></div>
+      <span class="sbr-n">${v}</span>
+    </div>`;
+  }).join('');
+
+  c.innerHTML = `
+    <div class="res-header">
+      <div>
+        <div class="rh-domain">${entry.domain}</div>
+        <div class="rh-meta">
+          <span class="rh-m"><svg viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1"/><path d="M6 3.5v2.5l1.5 1" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>${new Date(entry.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</span>
+          <span class="rh-sep"></span>
+          <span class="rh-m">${(r.components||[]).length} components</span>
+          ${r.limitedKnowledge ? '<span class="rh-sep"></span><span class="rh-m" style="color:var(--amber)">⚠ Limited data</span>' : ''}
+        </div>
+      </div>
+      <div class="rh-actions">
+        <button class="rha" onclick="switchView('cmo')">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M2 10l4-4 3 3 5-6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          AI Strategist
+        </button>
+        <button class="rha" onclick="shareReport()">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M5.5 3H3a1 1 0 00-1 1v7a1 1 0 001 1h7a1 1 0 001-1v-2.5M8.5 1h4v4M12.5 1L7 6.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Share report
+        </button>
+        <button class="rha rha-primary" onclick="switchView('dash')">
+          <svg viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          New analysis
+        </button>
+        <div class="score-ring" style="border-color:${r.overallScore>=70?'var(--green)':r.overallScore>=50?'var(--amber)':'var(--red)'}">
+          <span class="sr-n" style="color:${r.overallScore>=70?'var(--green-dark)':r.overallScore>=50?'var(--amber)':'var(--red)'}">${r.overallScore||0}</span>
+          <span class="sr-l">Score</span>
+        </div>
+      </div>
+    </div>
+
+    ${r.summary ? `<div class="sum-bar">${r.summary}</div>` : ''}
+
+    ${r.threatLevel ? `<div style="display:flex;align-items:center;gap:10px;background:${threatBg};border:1px solid ${threatColor};border-radius:var(--r-xl);padding:14px 20px;margin-bottom:16px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${threatColor};flex-shrink:0"></div>
+      <div><strong style="color:${threatColor};font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">${r.threatLevel} THREAT</strong><span style="font-size:13px;color:var(--text-muted);margin-left:10px">${r.threatReason||''}</span></div>
+    </div>` : ''}
+
+    <div class="res-grid">
+      <div>
+        ${insights ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--cyan-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--cyan-dark)" stroke-width="1.3" stroke-linecap="round"><path d="M7 2v10M3 6l4-4 4 4"/></svg></div>
+            <span class="panel-hd-t">Strategic Insights</span>
+          </div>
+          <div class="panel-body"><div class="insight-items">${insights}</div></div>
+        </div>` : ''}
+
+        ${r.positioning ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--purple-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--purple)" stroke-width="1.3" stroke-linecap="round"><circle cx="7" cy="7" r="5"/><path d="M7 4v3l2 1"/></svg></div>
+            <span class="panel-hd-t">Positioning Intelligence</span>
+          </div>
+          <div class="panel-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+              <div style="background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+                <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">They claim</div>
+                <div style="font-size:13px;color:var(--gray-700)">${r.positioning.claimedPosition||'—'}</div>
+              </div>
+              <div style="background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px">
+                <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Reality</div>
+                <div style="font-size:13px;color:var(--gray-700)">${r.positioning.actualPosition||'—'}</div>
+              </div>
+            </div>
+            ${r.positioning.positioningGap ? `<div style="background:var(--red-light);border-left:3px solid var(--red);padding:12px 14px;border-radius:var(--r)">
+              <div style="font-size:11px;font-weight:600;color:var(--red);margin-bottom:4px">THE GAP</div>
+              <div style="font-size:13px;color:var(--gray-700)">${r.positioning.positioningGap}</div>
+            </div>` : ''}
+          </div>
+        </div>` : ''}
+
+        ${r.strategicGaps?.length ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--red-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--red)" stroke-width="1.3" stroke-linecap="round"><path d="M7 12V2M3 8l4 4 4-4"/></svg></div>
+            <span class="panel-hd-t">Market Gaps</span>
+          </div>
+          <div class="panel-body">${r.strategicGaps.map(g => `<div style="background:var(--gray-50);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px">
+            <div style="font-size:12px;font-weight:600;color:var(--navy-900);margin-bottom:5px">${g.gap}</div>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">${g.opportunity}</div>
+            <span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px;background:${g.impact==='high'?'var(--green-light)':g.impact==='medium'?'var(--amber-light)':'var(--gray-100)'};color:${g.impact==='high'?'var(--green-dark)':g.impact==='medium'?'var(--amber)':'var(--gray-500)'};text-transform:uppercase">${g.impact} impact</span>
+          </div>`).join('')}</div>
+        </div>` : ''}
+
+        ${r.customerSentiment ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--cyan-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--cyan-dark)" stroke-width="1.3" stroke-linecap="round"><path d="M2 3h10v7H8l-2 2-2-2H2z"/></svg></div>
+            <span class="panel-hd-t">Customer Sentiment</span>
+            <span style="margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;background:${r.customerSentiment.sentimentScore==='positive'?'var(--green-light)':r.customerSentiment.sentimentScore==='negative'?'var(--red-light)':'var(--amber-light)'};color:${r.customerSentiment.sentimentScore==='positive'?'var(--green-dark)':r.customerSentiment.sentimentScore==='negative'?'var(--red)':'var(--amber)'};text-transform:capitalize">${r.customerSentiment.sentimentScore||'neutral'}</span>
+          </div>
+          <div class="panel-body">
+            ${r.customerSentiment.lovedFeatures?.length ? `<div style="margin-bottom:14px">
+              <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">What customers love</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px">${r.customerSentiment.lovedFeatures.map(f=>`<span style="background:var(--green-light);color:var(--green-dark);border:1px solid rgba(0,255,156,0.2);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:500">✓ ${f}</span>`).join('')}</div>
+            </div>` : ''}
+            ${r.customerSentiment.topComplaints?.length ? `<div>
+              <div style="font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Top complaints — your opportunity</div>
+              ${r.customerSentiment.topComplaints.map(c=>`<div style="display:flex;gap:8px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--red);font-size:13px;flex-shrink:0">✗</span><span style="font-size:13px;color:var(--gray-700)">${c}</span></div>`).join('')}
+            </div>` : ''}
+          </div>
+        </div>` : ''}
+      </div>
+
+      <div>
+        ${components ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--navy-50)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--navy-700)" stroke-width="1.3" stroke-linecap="round"><rect x="2" y="2" width="4" height="4" rx="1"/><rect x="8" y="2" width="4" height="4" rx="1"/><rect x="2" y="8" width="4" height="4" rx="1"/><rect x="8" y="8" width="4" height="4" rx="1"/></svg></div>
+            <span class="panel-hd-t">Components</span>
+          </div>
+          <div class="panel-body"><div class="comp-items">${components}</div></div>
+        </div>` : ''}
+
+        ${breakdownRows ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--green-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--green-dark)" stroke-width="1.3" stroke-linecap="round"><path d="M2 10l3-3 2.5 2.5 4.5-5"/></svg></div>
+            <span class="panel-hd-t">Score Breakdown</span>
+          </div>
+          <div class="panel-body"><div class="sb-rows">${breakdownRows}</div></div>
+        </div>` : ''}
+
+        ${r.immediateActions?.length ? `<div class="panel">
+          <div class="panel-hd">
+            <div class="panel-hd-ico" style="background:var(--cyan-light)"><svg viewBox="0 0 14 14" fill="none" stroke="var(--cyan-dark)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2H5a1 1 0 00-1 1v8a1 1 0 001 1h4a1 1 0 001-1V3a1 1 0 00-1-1z"/><path d="M7 5v4M5.5 7h3"/></svg></div>
+            <span class="panel-hd-t">Your Moves</span>
+          </div>
+          <div class="panel-body">${r.immediateActions.map(a => `<div style="background:var(--gray-50);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:var(--r-lg);padding:12px 14px;margin-bottom:10px">
+            <div style="font-size:13px;font-weight:500;color:var(--navy-900);margin-bottom:4px">${a.action}</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:6px">${a.why||''}</div>
+            <span style="font-size:11px;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.3px">${a.effort||''} effort</span>
+          </div>`).join('')}</div>
+        </div>` : ''}
+      </div>
+    </div>`;
+
+  // Animate score bars
+  setTimeout(() => document.querySelectorAll('.sbr-fill').forEach(el => { el.style.width = el.style.width; }), 100);
+}
+
+// ── AI AGENT ENGINE ──────────────────────────────────────
+
+const AGENT_TASKS = {
+  'scan-competitor':    { label: 'Scan competitor',       icon: '🔍', desc: 'Analyze a competitor URL' },
+  'gap-report':         { label: 'Gap report',            icon: '📊', desc: 'Find gaps vs your brand' },
+  'messaging-angles':   { label: 'Messaging angles',      icon: '✍️',  desc: 'Generate copy angles' },
+  'weekly-plan':        { label: '7-day action plan',     icon: '📅', desc: 'Build a prioritized plan' },
+  'positioning-brief':  { label: 'Positioning brief',     icon: '🎯', desc: 'Sharpen your positioning' },
+  'threat-assessment':  { label: 'Threat assessment',     icon: '⚠️',  desc: 'Rate competitor threats' },
+  'seo-gaps':           { label: 'SEO gap analysis',      icon: '🔎', desc: 'Find content opportunities' },
+  'pricing-intel':      { label: 'Pricing intelligence',  icon: '💰', desc: 'Analyze competitor pricing' },
+};
+
+const AGENT_SUGGESTIONS_DEFAULT = [
+  { label: '🔍 Scan a competitor', msg: 'Scan a competitor for me' },
+  { label: '📊 Show my market gaps', msg: 'What are the biggest gaps in my market right now?' },
+  { label: '✍️ Write messaging angles', msg: 'Generate 5 messaging angles I can use against my top competitor' },
+  { label: '📅 Build my 7-day plan', msg: 'Build me a 7-day action plan based on my latest analysis' },
+  { label: '🎯 Sharpen my positioning', msg: 'Help me sharpen my positioning brief' },
+];
+
+const AGENT_SUGGESTIONS_POST = [
+  { label: '✍️ Write copy from this', msg: 'Write 3 homepage headline variants based on this analysis' },
+  { label: '📅 Build action plan', msg: 'Turn these insights into a 7-day action plan' },
+  { label: '⚠️ Rate the threat level', msg: 'How big a threat is this competitor to my brand specifically?' },
+  { label: '💰 Analyze their pricing', msg: 'Break down their pricing strategy and how I should respond' },
+  { label: '🔎 Find SEO gaps', msg: 'What SEO content gaps can I exploit based on this?' },
+];
+
+let agentHistory = []; // {role, content}
+let agentRunning = false;
+
+function switchView(v) {
+  document.querySelectorAll('.app-view').forEach(el => { el.classList.remove('on'); el.style.display = 'none'; });
+  const view = document.getElementById('view-' + v);
+  if (view) { view.classList.add('on'); view.style.display = v === 'cmo' ? 'flex' : 'block'; }
+  document.querySelectorAll('.sb-nav li a').forEach(a => a.classList.remove('on'));
+  document.getElementById('nav-' + v)?.classList.add('on');
+  const titles = { dash: 'Dashboard', load: 'Analyzing…', result: 'Analysis Result', cmo: 'Mirra Agent', watchlist: 'Watchlist', batch: 'Batch Scan' };
+  document.getElementById('ab-title').textContent = titles[v] || 'Mirra';
+  if (v === 'cmo') initAgent();
+}
+
+function initAgent() {
+  const msgs = document.getElementById('agent-messages');
+  if (!msgs || msgs.dataset.init) return;
+  msgs.dataset.init = '1';
+  agentHistory = [];
+
+  const hasAnalysis = !!window._currentAnalysis;
+  const name = (S.user?.name || '').split(' ')[0] || 'there';
+  const domain = window._currentAnalysis?.domain;
+
+  const greeting = hasAnalysis
+    ? `Hey ${name} 👋 I've reviewed your analysis of **${domain}**. I can see some real opportunities here.\n\nI can run tasks for you — generate messaging, build action plans, write positioning briefs, find SEO gaps, or deep-dive any part of the competitive landscape. What do you want to tackle first?`
+    : `Hey ${name} 👋 I'm your Mirra Agent — a market intelligence specialist that actually *does things*, not just answers questions.\n\nRun a competitor analysis first and I'll have real data to work with. Or ask me anything about your market and I'll get started.`;
+
+  appendAgentMessage('agent', greeting);
+  renderSuggestions(hasAnalysis ? AGENT_SUGGESTIONS_POST : AGENT_SUGGESTIONS_DEFAULT);
+}
+
+function appendAgentMessage(role, content, isTask = false) {
+  const msgs = document.getElementById('agent-messages');
+  if (!msgs) return;
+
+  const isAgent = role === 'agent';
+  const wrap = document.createElement('div');
+  wrap.style.cssText = `display:flex;gap:12px;align-items:flex-start;${isAgent ? '' : 'flex-direction:row-reverse'}`;
+
+  const avatar = document.createElement('div');
+  avatar.style.cssText = 'width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600';
+  if (isAgent) {
+    avatar.style.background = 'linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,255,156,0.15))';
+    avatar.style.border = '1px solid rgba(0,200,255,0.3)';
+    avatar.innerHTML = `<svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>`;
+  } else {
+    avatar.style.background = 'linear-gradient(135deg,var(--purple),var(--cyan))';
+    avatar.textContent = (S.user?.name || 'U')[0].toUpperCase();
+    avatar.style.color = 'white';
+  }
+
+  const bubble = document.createElement('div');
+  bubble.style.cssText = isAgent
+    ? `max-width:75%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:${isTask?'12px':'4px 12px 12px 12px'};padding:14px 16px;color:rgba(255,255,255,0.88);font-size:14px;line-height:1.65`
+    : `max-width:75%;background:rgba(0,200,255,0.12);border:1px solid rgba(0,200,255,0.2);border-radius:12px 4px 12px 12px;padding:12px 16px;color:rgba(255,255,255,0.9);font-size:14px;line-height:1.65`;
+
+  if (isTask) bubble.style.borderLeft = '3px solid var(--cyan)';
+
+  // Render markdown-lite: **bold**, newlines
+  bubble.innerHTML = content
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:white;font-weight:600">$1</strong>')
+    .replace(/\n\n/g, '</p><p style="margin-top:10px">')
+    .replace(/\n/g, '<br>');
+  bubble.innerHTML = '<p>' + bubble.innerHTML + '</p>';
+
+  wrap.appendChild(avatar);
+  wrap.appendChild(bubble);
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendAgentTyping() {
+  const msgs = document.getElementById('agent-messages');
+  const wrap = document.createElement('div');
+  wrap.id = 'agent-typing';
+  wrap.style.cssText = 'display:flex;gap:12px;align-items:flex-start';
+  wrap.innerHTML = `
+    <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,rgba(0,200,255,0.2),rgba(0,255,156,0.15));border:1px solid rgba(0,200,255,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+      <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
+    </div>
+    <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:4px 12px 12px 12px;padding:14px 18px;display:flex;gap:5px;align-items:center">
+      <span style="width:7px;height:7px;border-radius:50%;background:rgba(0,200,255,0.6);animation:pulse 1s infinite"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:rgba(0,200,255,0.6);animation:pulse 1s 0.2s infinite"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:rgba(0,200,255,0.6);animation:pulse 1s 0.4s infinite"></span>
+    </div>`;
+  msgs.appendChild(wrap);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('agent-typing')?.remove();
+}
+
+function renderSuggestions(suggestions) {
+  const el = document.getElementById('agent-suggestions');
+  if (!el) return;
+  el.innerHTML = suggestions.map(s =>
+    `<button onclick="clickSuggestion('${s.msg.replace(/'/g,"\\'")}','${s.label.replace(/'/g,"\\'")}'))" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:7px 14px;font-size:13px;color:rgba(255,255,255,0.7);cursor:pointer;font-family:inherit;transition:all 0.15s;white-space:nowrap" onmouseover="this.style.background='rgba(0,200,255,0.1)';this.style.borderColor='rgba(0,200,255,0.3)';this.style.color='white'" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='rgba(255,255,255,0.7)'">${s.label}</button>`
+  ).join('');
+}
+
+function clickSuggestion(msg) {
+  const input = document.getElementById('agent-input');
+  if (input) { input.value = msg; }
+  sendAgentMessage();
+}
+
+function agentKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAgentMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+async function sendAgentMessage() {
+  if (agentRunning) return;
+  const input = document.getElementById('agent-input');
+  const msg = input?.value.trim();
+  if (!msg) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('agent-suggestions').innerHTML = '';
+  appendAgentMessage('user', msg);
+  agentHistory.push({ role: 'user', content: msg });
+
+  agentRunning = true;
+  document.getElementById('agent-send').style.opacity = '0.4';
+  appendAgentTyping();
+
+  try {
+    const analysis = window._currentAnalysis?.result || null;
+    const profile = S.user?.profile || {};
+    const domain = window._currentAnalysis?.domain || null;
+
+    const res = await fetch(getBackendBase() + '/agent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, history: agentHistory.slice(-10), analysis, domain, profile })
+    });
+
+    const data = await res.json();
+    removeTyping();
+
+    if (!res.ok || !data.success) throw new Error(data.error || 'Agent error');
+
+    const reply = data.result?.response || data.result || 'Done.';
+    const isTask = data.result?.taskType && data.result.taskType !== 'chat';
+
+    agentHistory.push({ role: 'assistant', content: typeof reply === 'string' ? reply : JSON.stringify(reply) });
+    appendAgentMessage('agent', typeof reply === 'string' ? reply : formatTaskResult(data.result), isTask);
+
+    // Update task badge if a task was run
+    if (isTask) updateTaskBadge(data.result.taskType);
+
+    // Show contextual follow-up suggestions
+    renderSuggestions(getFollowUpSuggestions(data.result?.taskType));
+
+  } catch (err) {
+    removeTyping();
+    appendAgentMessage('agent', `I hit an issue: **${err.message}**\n\nMake sure the Mirra backend is running and try again.`);
+  } finally {
+    agentRunning = false;
+    document.getElementById('agent-send').style.opacity = '1';
+    document.getElementById('agent-input')?.focus();
+  }
+}
+
+function formatTaskResult(result) {
+  if (!result || typeof result === 'string') return result || '';
+  // Format structured task results into readable markdown-lite
+  let out = '';
+  if (result.title) out += `**${result.title}**\n\n`;
+  if (result.summary) out += `${result.summary}\n\n`;
+  if (result.items?.length) out += result.items.map(i => `• ${i}`).join('\n') + '\n\n';
+  if (result.steps?.length) out += result.steps.map((s, i) => `**${i+1}.** ${s}`).join('\n') + '\n\n';
+  if (result.response) out += result.response;
+  return out.trim() || JSON.stringify(result);
+}
+
+function updateTaskBadge(taskType) {
+  const task = AGENT_TASKS[taskType];
+  if (!task) return;
+  const badges = document.getElementById('agent-task-badges');
+  if (!badges) return;
+  const existing = badges.querySelector(`[data-task="${taskType}"]`);
+  if (existing) return;
+  const badge = document.createElement('div');
+  badge.dataset.task = taskType;
+  badge.style.cssText = 'font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;background:rgba(0,255,156,0.12);border:1px solid rgba(0,255,156,0.25);color:rgba(0,255,156,0.9)';
+  badge.textContent = `${task.icon} ${task.label}`;
+  badges.appendChild(badge);
+}
+
+function getFollowUpSuggestions(taskType) {
+  const map = {
+    'scan-competitor':   [{ label: '📊 Find the gaps', msg: 'What gaps does this reveal for my brand?' }, { label: '✍️ Write copy from this', msg: 'Write 3 homepage headline variants based on this analysis' }, { label: '📅 Build action plan', msg: 'Turn these insights into a 7-day action plan' }],
+    'gap-report':        [{ label: '✍️ Write messaging for the gaps', msg: 'Write messaging that exploits these gaps' }, { label: '🎯 Update my positioning', msg: 'How should I update my positioning based on these gaps?' }],
+    'messaging-angles':  [{ label: '📧 Write cold email', msg: 'Turn the best angle into a cold email sequence' }, { label: '🐦 Write social posts', msg: 'Turn these into 5 LinkedIn posts' }],
+    'weekly-plan':       [{ label: '📊 Show progress metrics', msg: 'What metrics should I track for this plan?' }, { label: '🔎 Find quick wins', msg: 'Which of these tasks will have the fastest impact?' }],
+  };
+  return map[taskType] || AGENT_SUGGESTIONS_POST.slice(0, 3);
+}
+
+// Keep old generateCMOInsights as a no-op (called from old nav code)
+function generateCMOInsights() { initAgent(); }
+function renderCMO() {}
+
+
+
+// ── INIT ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  tryRestoreSession();
+  // Animate demo fill on load
+  setTimeout(() => { const f = document.getElementById('demo-fill'); if (f) f.style.width = '71%'; }, 1200);
+  // Enter key on auth inputs
+  document.getElementById('li-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('su-pass')?.addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); });
+  document.getElementById('dash-url')?.addEventListener('keydown', e => { if (e.key === 'Enter') startAnalysis(); });
+});
+</script>
+</body>
+</html>
