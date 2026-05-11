@@ -1,0 +1,5 @@
+ANTHROPIC_API_KEY=sk-ant-your-anthropic-key
+SCREENSHOT_API_KEY=your-screenshotone-key
+SIMILARWEB_API_KEY=your-similarweb-key
+DUNE_SIM_API_KEY=sim_your_dune_key
+PORT=3010
