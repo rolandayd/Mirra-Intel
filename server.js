@@ -40,7 +40,7 @@ app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '2mb' }));
 
 const PORT = Number(process.env.PORT || 3010);
-const WORKSPACE_ROOT = path.resolve(__dirname, '..');
+const WORKSPACE_ROOT = path.resolve(__dirname);
 const PUBLIC_DIR = path.join(WORKSPACE_ROOT, 'public');
 const LANDING_PAGE = path.join(WORKSPACE_ROOT, 'mirra-tester-v2.html');
 const USERS_FILE = path.join(__dirname, 'data', 'users.json');
