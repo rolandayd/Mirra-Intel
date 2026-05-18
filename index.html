@@ -900,6 +900,43 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 .ab-right{display:flex;align-items:center;gap:10px}
 .ab-badge{font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;background:var(--green-light);color:var(--green-dark)}
 .ab-count{font-size:13px;color:var(--text-muted)}
+
+/* Mobile sidebar toggle button — hidden on desktop */
+.sb-mob-toggle{
+  display:none;background:none;border:none;cursor:pointer;
+  padding:8px;border-radius:var(--r);color:var(--navy-900);
+  flex-shrink:0;
+}
+.sb-mob-toggle svg{width:20px;height:20px;display:block}
+
+/* Overlay behind sidebar on mobile */
+.sb-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+  z-index:149;
+}
+.sb-overlay.on{display:block}
+
+@media(max-width:768px){
+  .sb-mob-toggle{display:flex;align-items:center;justify-content:center}
+  .app-bar{padding:0 16px}
+  .ab-count{display:none}
+
+  .app-sidebar{
+    position:fixed;left:0;top:0;bottom:0;z-index:150;
+    transform:translateX(-100%);transition:transform 0.25s ease;
+  }
+  .app-sidebar.mob-open{transform:translateX(0)}
+
+  .dash-pad{padding:16px}
+  .url-panel{padding:16px}
+  .url-panel-row{flex-direction:column}
+  .cmo-grid{grid-template-columns:1fr !important}
+  .cmo-pad{padding:16px}
+  .res-grid{grid-template-columns:1fr !important}
+  .res-pad{padding:16px}
+  .batch-pad{padding:16px}
+  .wl-pad{padding:16px}
+}
 .app-view{display:none;flex:1;overflow-y:auto}
 .app-view.on{display:block}
 #view-cmo.on{display:flex;flex-direction:column}
@@ -1094,8 +1131,11 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 
 <!-- ═══════ APP ═══════ -->
 <div id="pg-app" class="page">
+  <!-- Mobile sidebar overlay -->
+  <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
-  <aside class="app-sidebar">
+  <aside class="app-sidebar" id="app-sidebar">
     <div class="sb-top">
       <div class="sb-logo-mark">
         <svg viewBox="0 0 18 18" fill="none"><circle cx="5" cy="5" r="2" stroke="#00FF9C" stroke-width="1.2" fill="none"/><circle cx="5" cy="5" r="0.8" fill="#00FF9C"/><line x1="6.4" y1="6.4" x2="14" y2="14" stroke="#00C8FF" stroke-width="1.3" stroke-linecap="round"/><path d="M10 14 Q14 10 14 14" stroke="#00C8FF" stroke-width="1.2" fill="none" stroke-linecap="round"/><path d="M8.5 15.5 Q14 8.5 14 14" stroke="#00C8FF" stroke-width="1.0" fill="none" stroke-linecap="round" opacity="0.6"/></svg>
@@ -1150,7 +1190,12 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
   <!-- Main -->
   <main class="app-main">
     <div class="app-bar">
-      <span class="ab-title" id="ab-title">Dashboard</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="sb-mob-toggle" onclick="toggleSidebar()" aria-label="Open menu">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <span class="ab-title" id="ab-title">Dashboard</span>
+      </div>
       <div class="ab-right">
         <span class="ab-badge" id="ab-badge">Free</span>
         <span class="ab-count" id="ab-count">3 analyses remaining</span>
@@ -1434,6 +1479,16 @@ function tryRestoreSession() {
 // ── MOBILE MENU ─────────────────────────────────────────
 function toggleMob() { document.getElementById('mobNav').classList.toggle('open'); }
 function closeMob() { document.getElementById('mobNav')?.classList.remove('open'); }
+
+// ── APP SIDEBAR (MOBILE) ─────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('app-sidebar').classList.toggle('mob-open');
+  document.getElementById('sb-overlay').classList.toggle('on');
+}
+function closeSidebar() {
+  document.getElementById('app-sidebar').classList.remove('mob-open');
+  document.getElementById('sb-overlay').classList.remove('on');
+}
 
 // ── LANDING INPUTS ───────────────────────────────────────
 function fctaGo() {
@@ -1968,6 +2023,7 @@ let agentHistory = []; // {role, content}
 let agentRunning = false;
 
 function switchView(v) {
+  closeSidebar();
   document.querySelectorAll('.app-view').forEach(el => { el.classList.remove('on'); el.style.display = 'none'; });
   const view = document.getElementById('view-' + v);
   if (view) { view.classList.add('on'); view.style.display = v === 'cmo' ? 'flex' : 'block'; }
