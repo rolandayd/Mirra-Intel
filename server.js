@@ -643,6 +643,11 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
+// Debug — tells you if ADMIN_SECRET is set without revealing it
+app.get('/admin/ping', (req, res) => {
+  res.json({ adminSecretSet: Boolean(process.env.ADMIN_SECRET) });
+});
+
 // ── Admin middleware ──────────────────────────────────────────────────────────
 function adminAuth(req, res, next) {
   const secret = req.headers['x-admin-secret'] || req.query.secret;
