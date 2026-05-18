@@ -1,0 +1,97 @@
+# Mirra-Intel — AI Rules (.cursorrules)
+
+## Project Identity
+Mirra is a competitor intelligence SaaS. Backend: Node.js + Express (single file: server.js).
+Frontend: single-file HTML app (mirra-tester-v2.html). AI: Claude Haiku via Anthropic SDK.
+Deploy: Railway (backend) + Netlify (frontend).
+
+---
+
+## Code Style
+
+- Use `const` by default. `let` only when reassignment is needed. Never `var`.
+- Async/await everywhere. No raw `.then()` chains.
+- All async route handlers must have try/catch. Never let unhandled rejections crash the server.
+- Use early returns to reduce nesting. Avoid deeply nested if/else.
+- Keep functions small and single-purpose. If a function does two things, split it.
+- No unused variables. No commented-out code left in PRs.
+
+---
+
+## Backend Rules (server.js)
+
+- All routes follow the pattern: validate input → run logic → return JSON.
+- Always validate required fields at the top of a route. Return 400 with a clear message if missing.
+- Never expose raw error stack traces to the client. Log internally, return a safe message.
+- Use `normalizeEmail()` on every email input before any comparison or storage.
+- Never store plaintext passwords. Always use `hashPassword(password, salt)` with a fresh `crypto.randomBytes(16)` salt.
+- Usage limits are enforced server-side. Do not rely solely on frontend checks.
+- `DEMO_MODE=true` bypasses limits — never remove this flag, it's needed for demos.
+- All file I/O goes through `readJsonFile` / `writeJsonFile` helpers. Do not use `fs` directly in routes.
+- External fetches must use `AbortSignal.timeout()`. Never make unbounded network calls.
+- Parallel fetches use `Promise.all`. Do not await them sequentially.
+
+---
+
+## AI / Prompt Rules
+
+- All prompts must instruct Claude to return **only raw JSON** — no markdown, no explanation.
+- Always run `extractJSON()` on Claude's response. Never assume it's clean JSON.
+- If `extractJSON()` returns null, return a 500 with a user-friendly retry message. Do not crash.
+- Prompt shapes are contracts. If you change the output schema, update the frontend parser too.
+- Use `claude-haiku-4-5-20251001` for all endpoints. Do not upgrade models without testing token costs.
+- Keep max_tokens conservative: 2200 for /analyze, 1800 for /cmo, 1200 for /agent.
+- The agent system prompt must always include the current analysis context when available.
+
+---
+
+## Scraping Rules
+
+- All scrapers (`fetchTrustpilot`, `fetchG2`, `fetchReddit`, etc.) must return `null` on failure — never throw.
+- Scrapers are best-effort. The analysis must work even if all scrapers return null.
+- Use `uniqPush()` to deduplicate review text. Never push duplicates.
+- Limit review arrays: Trustpilot max 12, G2 max 10, Reddit max 8.
+- Do not scrape with Puppeteer unless absolutely necessary — prefer raw HTTP + HTML parsing.
+
+---
+
+## Auth Rules
+
+- No JWT. User identity is the email address, stored in localStorage on the client.
+- The server trusts the email sent in request body/query for usage tracking only — not for sensitive operations.
+- `sanitizeUser()` must be called before returning any user object. Never return `salt` or `passwordHash`.
+- Signup must check for duplicate emails before inserting.
+
+---
+
+## Frontend Rules (mirra-tester-v2.html)
+
+- The frontend is a single HTML file. Keep it that way — no build step, no bundler.
+- All API calls go to `MIRRA_BACKEND_URL`. This constant must be easy to find and update.
+- Show loading states during analysis. Never leave the user staring at a blank screen.
+- Display usage remaining prominently. Users need to know their limit.
+- All error responses from the API must be shown to the user in plain language.
+- Do not store sensitive data in localStorage beyond the user object (no API keys, no analysis raw data).
+
+---
+
+## What NOT to Do
+
+- Do not add a database (Postgres, MongoDB, etc.) without discussing persistence strategy first — Railway has no persistent disk by default.
+- Do not add JWT or session middleware without also updating the frontend auth flow.
+- Do not add new npm dependencies without checking if the functionality already exists in Node stdlib or current deps.
+- Do not split server.js into multiple files without creating a proper module structure plan first.
+- Do not change the Claude model without checking pricing and output quality.
+- Do not remove `DEMO_MODE` support — it's used for investor demos and onboarding.
+- Do not add Puppeteer usage — it's in package.json but intentionally unused (too heavy for Railway free tier).
+
+---
+
+## When Adding a New Feature
+
+1. Add the route to the API endpoints table in ARCHITECTURE.md.
+2. Validate all inputs at the top of the route.
+3. Wrap external calls in try/catch, return null on failure.
+4. If it uses Claude, define the prompt shape and add `extractJSON()` handling.
+5. If it affects usage limits, update `getUsage()` logic.
+6. Update the frontend to call the new endpoint and handle errors.
