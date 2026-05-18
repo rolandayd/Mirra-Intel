@@ -1226,10 +1226,12 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
           <div class="load-ttl">Analyzing <span id="app-load-domain">competitor</span></div>
           <p class="load-sub">Building your market intelligence report…</p>
           <div class="load-steps">
-            <div class="ls"><span class="ls-d" id="as1"></span>Rendering page</div>
-            <div class="ls"><span class="ls-d" id="as2"></span>Identifying components</div>
-            <div class="ls"><span class="ls-d" id="as3"></span>Generating AI insights</div>
-            <div class="ls"><span class="ls-d" id="as4"></span>Building report</div>
+            <div class="ls"><span class="ls-d" id="as1"></span><span id="as1t">Connecting…</span></div>
+            <div class="ls"><span class="ls-d" id="as2"></span><span id="as2t">Scraping signals…</span></div>
+            <div class="ls"><span class="ls-d" id="as3"></span><span id="as3t">Running AI…</span></div>
+            <div class="ls"><span class="ls-d" id="as4"></span><span id="as4t">Building report…</span></div>
+          </div>
+          <div id="live-msg" style="margin-top:14px;font-size:12px;color:var(--cyan-dark);min-height:16px;font-family:monospace;transition:opacity 0.3s">
           </div>
         </div>
       </div>
@@ -1660,29 +1662,43 @@ async function startAnalysis() {
   document.getElementById('app-load-domain').textContent = domain;
   switchView('load');
 
-  const ids = ['as1', 'as2', 'as3', 'as4'];
-  let i = 0;
-  const t = setInterval(() => {
-    if (i > 0) document.getElementById(ids[i - 1]).className = 'ls-d done';
-    if (i < ids.length) { document.getElementById(ids[i]).className = 'ls-d active'; i++; }
-    else clearInterval(t);
-  }, 2200);
+  const ids = ['as1','as2','as3','as4'];
+  const phases = [
+    ['Connecting to backend…','Checking Trustpilot…','Scanning G2 reviews…'],
+    ['Reading Reddit sentiment…','Fetching news signals…','Scanning hiring pages…'],
+    ['Sending to Claude AI…','Generating strategic brief…','Scoring threat level…'],
+    ['Mapping positioning gaps…','Building action plan…','Finalising report…'],
+  ];
+  let step = 0, msgIdx = 0;
+
+  function setMsg(m) {
+    const el = document.getElementById('live-msg');
+    if (!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = '▸ ' + m; el.style.opacity = '1'; }, 150);
+  }
+  function nextStep() {
+    if (step > 0) document.getElementById(ids[step-1]).className = 'ls-d done';
+    if (step < ids.length) { document.getElementById(ids[step]).className = 'ls-d active'; setMsg(phases[step][0]); }
+    step++;
+  }
+  nextStep();
+  const stepTimer = setInterval(() => { if (step < ids.length) nextStep(); else clearInterval(stepTimer); }, 4500);
+  const msgTimer  = setInterval(() => { const p = phases[Math.min(step-1, phases.length-1)]; msgIdx = (msgIdx+1)%p.length; setMsg(p[msgIdx]); }, 1800);
 
   try {
     const result = await callBackend(raw);
-    clearInterval(t);
+    clearInterval(stepTimer); clearInterval(msgTimer);
     ids.forEach(id => document.getElementById(id).className = 'ls-d done');
+    setMsg('Analysis complete ✓');
     S.left = Math.max(0, S.left - 1);
-    // Sync real count from server
     fetch(getBackendBase() + '/usage?email=' + encodeURIComponent(S.user?.email || ''))
       .then(r => r.json()).then(u => { S.left = u.remaining ?? S.left; updateCountDisplay(); }).catch(() => {});
     const entry = { id: 'local-' + Date.now(), url: raw, domain, result, date: new Date() };
     S.analyses.unshift(entry);
     window._currentAnalysis = entry;
     window._currentCmoNeedsLoad = true;
-    document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
-    document.getElementById('stat-left').textContent = S.left;
-    updateStats(); renderSidebar(); renderTable();
+    updateCountDisplay(); updateStats(); renderSidebar(); renderTable();
     document.getElementById('nav-result').style.display = 'flex';
     document.getElementById('nav-cmo').style.display = 'flex';
     renderResult(entry);
