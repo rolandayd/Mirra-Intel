@@ -639,6 +639,10 @@ app.post('/onchain', authenticateToken, async (req, res) => {
   res.json({ success: true, onChainData: { hasOnChainData: false, message: 'On-chain data coming in Phase 4.' } });
 });
 
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
 // ── Admin middleware ──────────────────────────────────────────────────────────
 function adminAuth(req, res, next) {
   const secret = req.headers['x-admin-secret'] || req.query.secret;
