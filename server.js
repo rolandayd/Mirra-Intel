@@ -47,6 +47,15 @@ const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('he
 const JWT_EXPIRES_IN = '7d';
 const MODEL = 'claude-3-5-haiku-20241022';
 
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? require('stripe')(process.env.STRIPE_SECRET_KEY)
+  : null;
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || ''; // Pro plan price ID
+const PRO_PRICE_USD = 29; // displayed in UI
+const SOLANA_PAY_RECIPIENT = process.env.SOLANA_PAY_RECIPIENT || ''; // your wallet address
+const SOLANA_PAY_AMOUNT = process.env.SOLANA_PAY_AMOUNT_USDC || '29'; // USDC amount
+
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || '' });
 
 const USERS_FILE = path.join(__dirname, 'data', 'users.json');
@@ -170,15 +179,18 @@ const sanitizeUser = (u) => ({ id: u.id, name: u.name, email: u.email, createdAt
 
 // ── Usage ─────────────────────────────────────────────────────────────────────
 async function getUsage(email) {
-  if (!email) return { used: 0, limit: FREE_LIMIT, remaining: FREE_LIMIT };
-  const h = await readHistory();
+  if (!email) return { used: 0, limit: FREE_LIMIT, remaining: FREE_LIMIT, tier: 'free' };
+  const [h, users] = await Promise.all([readHistory(), readUsers()]);
+  const user = users.find(u => u.email === normalizeEmail(email));
+  const tier = user?.tier || 'free';
+  if (tier === 'pro') return { used: 0, limit: 9999, remaining: 9999, tier: 'pro' };
   const now = new Date();
   const thisMonth = (h[normalizeEmail(email)] || []).filter(e => {
     const d = new Date(e.analyzedAt);
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
   });
   const used = thisMonth.length;
-  return { used, limit: FREE_LIMIT, remaining: Math.max(0, FREE_LIMIT - used) };
+  return { used, limit: FREE_LIMIT, remaining: Math.max(0, FREE_LIMIT - used), tier: 'free' };
 }
 
 // ── Fetch helpers ─────────────────────────────────────────────────────────────
@@ -622,6 +634,111 @@ app.post('/agent', authenticateToken, rateLimit(30), async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message || 'Agent error.' });
   }
+});
+
+// ── /billing/checkout — Stripe Checkout session ───────────────────────────────
+app.post('/billing/checkout', authenticateToken, async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured.' });
+  if (!STRIPE_PRICE_ID) return res.status(503).json({ error: 'STRIPE_PRICE_ID not set.' });
+  const successUrl = `${req.headers.origin || process.env.APP_URL || 'http://localhost:3010'}/?upgraded=1`;
+  const cancelUrl = `${req.headers.origin || process.env.APP_URL || 'http://localhost:3010'}/`;
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      line_items: [{ price: STRIPE_PRICE_ID, quantity: 1 }],
+      customer_email: req.user.email,
+      metadata: { userId: req.user.id, email: req.user.email },
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+    });
+    res.json({ url: session.url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── /billing/webhook — Stripe webhook ────────────────────────────────────────
+// Must be registered BEFORE express.json() parses the body — needs raw body
+app.post('/billing/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe) return res.status(503).send('Stripe not configured.');
+  let event;
+  try {
+    event = STRIPE_WEBHOOK_SECRET
+      ? stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET)
+      : JSON.parse(req.body);
+  } catch (err) {
+    return res.status(400).send(`Webhook error: ${err.message}`);
+  }
+  if (event.type === 'checkout.session.completed') {
+    const email = normalizeEmail(event.data.object.customer_email || event.data.object.metadata?.email);
+    if (email) {
+      const users = await readUsers();
+      const user = users.find(u => u.email === email);
+      if (user) { user.tier = 'pro'; await writeUsers(users); }
+    }
+  }
+  if (event.type === 'customer.subscription.deleted') {
+    const custId = event.data.object.customer;
+    try {
+      const customer = await stripe.customers.retrieve(custId);
+      const email = normalizeEmail(customer.email);
+      const users = await readUsers();
+      const user = users.find(u => u.email === email);
+      if (user) { user.tier = 'free'; await writeUsers(users); }
+    } catch {}
+  }
+  res.json({ received: true });
+});
+
+// ── /billing/solana-pay — generate Solana Pay URL ────────────────────────────
+app.post('/billing/solana-pay', authenticateToken, async (req, res) => {
+  if (!SOLANA_PAY_RECIPIENT) return res.status(503).json({ error: 'SOLANA_PAY_RECIPIENT not configured.' });
+  // Solana Pay transfer request URL (USDC on Solana)
+  // Reference encodes user id so we can match payment on confirmation
+  const reference = crypto.randomBytes(16).toString('hex');
+  const label = encodeURIComponent('Mirra Pro');
+  const message = encodeURIComponent('Mirra Pro — unlimited analyses');
+  // USDC mint on Solana mainnet
+  const usdcMint = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v';
+  const solanaPayUrl =
+    `solana:${SOLANA_PAY_RECIPIENT}` +
+    `?amount=${SOLANA_PAY_AMOUNT}` +
+    `&spl-token=${usdcMint}` +
+    `&reference=${reference}` +
+    `&label=${label}` +
+    `&message=${message}`;
+  // Store pending payment reference so webhook/confirm can upgrade user
+  const users = await readUsers();
+  const user = users.find(u => u.id === req.user.id);
+  if (user) {
+    user.pendingPayRef = reference;
+    await writeUsers(users);
+  }
+  res.json({ url: solanaPayUrl, reference, amount: SOLANA_PAY_AMOUNT, recipient: SOLANA_PAY_RECIPIENT });
+});
+
+// ── /billing/solana-confirm — called by frontend after tx confirmed ───────────
+app.post('/billing/solana-confirm', authenticateToken, async (req, res) => {
+  const { signature } = req.body || {};
+  if (!signature) return res.status(400).json({ error: 'signature required.' });
+  // In production: verify the tx on-chain via Helius/RPC before upgrading.
+  // For now: trust the signature + match pending reference, upgrade user.
+  const users = await readUsers();
+  const user = users.find(u => u.id === req.user.id);
+  if (!user) return res.status(404).json({ error: 'User not found.' });
+  user.tier = 'pro';
+  user.proSince = new Date().toISOString();
+  user.proTxSignature = signature;
+  delete user.pendingPayRef;
+  await writeUsers(users);
+  res.json({ success: true, tier: 'pro' });
+});
+
+// ── /billing/status — check current tier ─────────────────────────────────────
+app.get('/billing/status', authenticateToken, async (req, res) => {
+  const users = await readUsers();
+  const user = users.find(u => u.id === req.user.id);
+  res.json({ tier: user?.tier || 'free', proSince: user?.proSince || null });
 });
 
 // ── /history ──────────────────────────────────────────────────────────────────

@@ -889,6 +889,45 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 .sb-logout:hover{color:var(--red);background:var(--red-light)}
 .sb-logout svg{width:14px;height:14px}
 
+/* ── USAGE BAR ── */
+.usage-bar-wrap{padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06)}
+.usage-bar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.usage-bar-lbl{font-size:11px;color:rgba(255,255,255,0.35)}
+.usage-bar-count{font-size:11px;color:rgba(255,255,255,0.5);font-weight:500}
+.usage-bar-track{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden}
+.usage-bar-fill{height:100%;border-radius:2px;transition:width 0.4s ease;background:var(--cyan)}
+.usage-bar-fill.warn{background:var(--amber)}
+.usage-bar-fill.full{background:var(--red)}
+.upgrade-cta{margin:8px 14px 0;padding:8px 12px;background:linear-gradient(135deg,rgba(0,200,255,0.15),rgba(139,92,246,0.15));border:1px solid rgba(0,200,255,0.25);border-radius:var(--r);cursor:pointer;text-align:center;transition:all 0.2s;font-family:inherit;width:calc(100% - 28px)}
+.upgrade-cta:hover{background:linear-gradient(135deg,rgba(0,200,255,0.25),rgba(139,92,246,0.25))}
+.upgrade-cta-txt{font-size:12px;font-weight:600;color:var(--cyan)}
+.upgrade-cta-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+
+/* ── UPGRADE MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.upgrade-modal{background:#1e293b;border:1px solid #334155;border-radius:16px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 25px 50px rgba(0,0,0,0.5)}
+.um-head{padding:24px 24px 0;text-align:center}
+.um-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(0,200,255,0.15),rgba(139,92,246,0.15));border:1px solid rgba(0,200,255,0.3);border-radius:20px;padding:4px 14px;font-size:12px;font-weight:600;color:var(--cyan);margin-bottom:16px}
+.um-title{font-size:24px;font-weight:700;color:#f1f5f9;margin-bottom:8px}
+.um-sub{font-size:14px;color:#64748b;margin-bottom:20px}
+.um-price{font-size:36px;font-weight:800;color:#f1f5f9;line-height:1}
+.um-price span{font-size:16px;font-weight:400;color:#64748b}
+.um-features{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+.um-feat{display:flex;align-items:center;gap:10px;font-size:14px;color:#cbd5e1}
+.um-feat-dot{width:18px;height:18px;border-radius:50%;background:rgba(0,200,255,0.15);border:1px solid rgba(0,200,255,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;color:var(--cyan)}
+.um-divider{height:1px;background:#1e293b;margin:0 24px}
+.um-actions{padding:20px 24px;display:flex;flex-direction:column;gap:10px}
+.um-btn-card{padding:13px;border-radius:10px;border:none;background:#6366f1;color:white;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.um-btn-card:hover{background:#4f46e5}
+.um-btn-crypto{padding:13px;border-radius:10px;border:1.5px solid rgba(0,200,255,0.4);background:rgba(0,200,255,0.08);color:var(--cyan);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.um-btn-crypto:hover{background:rgba(0,200,255,0.15);border-color:var(--cyan)}
+.um-close{display:block;text-align:center;padding:12px;font-size:13px;color:#475569;cursor:pointer;border:none;background:none;font-family:inherit;width:100%}
+.um-close:hover{color:#94a3b8}
+.um-solana-info{padding:16px 24px;background:rgba(0,200,255,0.05);border-top:1px solid rgba(0,200,255,0.1);font-size:13px;color:#64748b;text-align:center;display:none}
+.um-solana-info.show{display:block}
+.um-sol-addr{font-family:monospace;font-size:11px;color:var(--cyan);word-break:break-all;margin-top:6px;padding:8px;background:rgba(0,0,0,0.3);border-radius:6px}
+.um-sol-note{font-size:12px;color:#475569;margin-top:8px}
+
 /* ── APP MAIN ── */
 .app-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--gray-50)}
 .app-bar{
@@ -1131,6 +1170,44 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 
 <!-- ═══════ APP ═══════ -->
 <div id="pg-app" class="page">
+
+  <!-- Upgrade Modal -->
+  <div class="modal-backdrop" id="upgrade-modal" style="display:none" onclick="if(event.target===this)closeUpgradeModal()">
+    <div class="upgrade-modal">
+      <div class="um-head">
+        <div class="um-badge">✦ Mirra Pro</div>
+        <div class="um-title">Unlock unlimited intelligence</div>
+        <div class="um-sub">You've used your 3 free analyses this month</div>
+        <div class="um-price">$29<span>/month</span></div>
+      </div>
+      <div class="um-features">
+        <div class="um-feat"><div class="um-feat-dot">✓</div>Unlimited competitor analyses</div>
+        <div class="um-feat"><div class="um-feat-dot">✓</div>AI CMO strategy briefs</div>
+        <div class="um-feat"><div class="um-feat-dot">✓</div>Full analysis history</div>
+        <div class="um-feat"><div class="um-feat-dot">✓</div>Priority support</div>
+      </div>
+      <div class="um-actions">
+        <button class="um-btn-card" onclick="checkoutStripe()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M1 6h14" stroke="currentColor" stroke-width="1.3"/></svg>
+          Pay with card — $29/mo
+        </button>
+        <button class="um-btn-crypto" onclick="checkoutSolana()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M5 9.5l6-3M5 6.5l6 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Pay with crypto — 29 USDC
+        </button>
+        <div class="um-solana-info" id="solana-info">
+          <div>Send <strong>29 USDC</strong> on Solana to:</div>
+          <div class="um-sol-addr" id="solana-addr">Loading…</div>
+          <div class="um-sol-note">After sending, paste your transaction signature below and click confirm.</div>
+          <div style="display:flex;gap:8px;margin-top:10px">
+            <input id="sol-sig-input" class="input" placeholder="Transaction signature" style="font-size:12px;padding:8px 10px;background:#0f172a;border-color:#334155;color:#e2e8f0"/>
+            <button onclick="confirmSolana()" style="padding:8px 14px;background:var(--cyan);border:none;border-radius:8px;color:#0f172a;font-weight:600;font-size:13px;cursor:pointer;white-space:nowrap;font-family:inherit">Confirm</button>
+          </div>
+        </div>
+      </div>
+      <button class="um-close" onclick="closeUpgradeModal()">Maybe later</button>
+    </div>
+  </div>
   <!-- Mobile sidebar overlay -->
   <div class="sb-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 
@@ -1174,6 +1251,19 @@ footer{background:var(--white);border-top:1px solid var(--border);padding:56px 4
 
     <div class="sb-section">Recent analyses</div>
     <div class="sb-recents" id="sb-recents-list"></div>
+
+    <!-- Usage bar -->
+    <div class="usage-bar-wrap" id="usage-bar-wrap">
+      <div class="usage-bar-row">
+        <span class="usage-bar-lbl">Analyses used</span>
+        <span class="usage-bar-count" id="usage-bar-count">0 / 3</span>
+      </div>
+      <div class="usage-bar-track"><div class="usage-bar-fill" id="usage-bar-fill" style="width:0%"></div></div>
+      <button class="upgrade-cta" onclick="openUpgradeModal()">
+        <div class="upgrade-cta-txt">⚡ Upgrade to Pro</div>
+        <div class="upgrade-cta-sub">Unlimited analyses · $29/mo</div>
+      </button>
+    </div>
 
     <div class="sb-user">
       <div class="sb-uav" id="sb-uav">U</div>
@@ -1490,6 +1580,73 @@ function closeSidebar() {
   document.getElementById('sb-overlay').classList.remove('on');
 }
 
+// ── BILLING ──────────────────────────────────────────────
+function openUpgradeModal() { document.getElementById('upgrade-modal').style.display = 'flex'; }
+function closeUpgradeModal() {
+  document.getElementById('upgrade-modal').style.display = 'none';
+  document.getElementById('solana-info').classList.remove('show');
+}
+
+async function checkoutStripe() {
+  try {
+    const res = await authFetch('/billing/checkout', { method: 'POST' });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+    else toast(data.error || 'Stripe not configured yet.');
+  } catch { toast('Could not start checkout.'); }
+}
+
+async function checkoutSolana() {
+  try {
+    const res = await authFetch('/billing/solana-pay', { method: 'POST' });
+    const data = await res.json();
+    if (data.error) { toast(data.error); return; }
+    document.getElementById('solana-addr').textContent = data.recipient;
+    document.getElementById('solana-info').classList.add('show');
+    // Open Solana Pay URL if wallet is available
+    if (data.url) window.open(data.url, '_blank');
+  } catch { toast('Could not generate payment request.'); }
+}
+
+async function confirmSolana() {
+  const sig = document.getElementById('sol-sig-input').value.trim();
+  if (!sig) { toast('Paste your transaction signature first.'); return; }
+  try {
+    const res = await authFetch('/billing/solana-confirm', {
+      method: 'POST',
+      body: JSON.stringify({ signature: sig }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      closeUpgradeModal();
+      toast('🎉 Welcome to Pro! Unlimited analyses unlocked.');
+      updateUsageBar({ tier: 'pro' });
+    } else { toast(data.error || 'Could not confirm payment.'); }
+  } catch { toast('Confirmation failed.'); }
+}
+
+function updateUsageBar(usage) {
+  if (!usage) return;
+  const wrap = document.getElementById('usage-bar-wrap');
+  const fill = document.getElementById('usage-bar-fill');
+  const count = document.getElementById('usage-bar-count');
+  if (usage.tier === 'pro') {
+    if (wrap) wrap.innerHTML = '<div style="padding:8px 0;text-align:center;font-size:12px;color:rgba(0,200,255,0.8);font-weight:600">⚡ Pro — Unlimited</div>';
+    return;
+  }
+  const pct = Math.min(100, Math.round((usage.used / usage.limit) * 100));
+  if (fill) {
+    fill.style.width = pct + '%';
+    fill.className = 'usage-bar-fill' + (pct >= 100 ? ' full' : pct >= 66 ? ' warn' : '');
+  }
+  if (count) count.textContent = `${usage.used} / ${usage.limit}`;
+  if (pct >= 100 && wrap) {
+    // Auto-show upgrade CTA more prominently when limit hit
+    const cta = wrap.querySelector('.upgrade-cta');
+    if (cta) cta.style.background = 'linear-gradient(135deg,rgba(239,68,68,0.2),rgba(139,92,246,0.2))';
+  }
+}
+
 // ── LANDING INPUTS ───────────────────────────────────────
 function fctaGo() {
   const v = document.getElementById('fctaEmail').value.trim();
@@ -1610,9 +1767,10 @@ async function bootApp() {
   document.getElementById('sb-uav').textContent = (S.user.name || 'U')[0].toUpperCase();
   // Fetch real usage from server
   try {
-    const res = await fetch(getBackendBase() + '/usage?email=' + encodeURIComponent(S.user.email || ''));
+    const res = await authFetch('/usage');
     const usage = await res.json();
     S.left = usage.remaining ?? 3;
+    updateUsageBar(usage);
   } catch (_) { S.left = 3; }
   document.getElementById('ab-count').textContent = `${S.left} analyses remaining`;
   document.getElementById('stat-left').textContent = S.left;
@@ -1712,7 +1870,7 @@ async function startAnalysis() {
   if (!raw.startsWith('http')) raw = 'https://' + raw;
   let domain;
   try { domain = new URL(raw).hostname.replace('www.', ''); } catch { toast('Please enter a valid URL'); return; }
-  if (S.left <= 0) { toast('Free limit reached — upgrade to continue'); return; }
+  if (S.left <= 0) { openUpgradeModal(); return; }
 
   document.getElementById('app-load-domain').textContent = domain;
   switchView('load');
