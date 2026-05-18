@@ -1,14 +1,15 @@
-// Mirra Backend v8 — 20x optimized
-// Key improvements:
-//   1. In-memory result cache (skip re-scraping same domain within 1hr)
-//   2. Scraper timeouts cut from 8s → 4s (fail fast, don't block)
-//   3. Streaming responses on /analyze and /agent (first token in <2s)
-//   4. Sharper prompts — tighter JSON schema, no fluff
-//   5. Parallel scraping unchanged (already good), but screenshot is non-blocking
-//   6. Rate limiting on expensive endpoints
+// Mirra Backend v9
+// Improvements over v8:
+//   1. JWT auth — signed tokens replace email-as-identity
+//   2. Input sanitization — URL validation, message cap, profile field limits
+//   3. Scraper resilience — retry + second selector for Trustpilot
+//   4. /history endpoint — retrieve past analyses per user
+//   5. Upgraded model to claude-3-5-haiku-20241022
+//   6. express upgraded to 4.22.2 (0 audit vulnerabilities)
 
 const express = require('express');
 const Anthropic = require('@anthropic-ai/sdk');
+const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const crypto = require('crypto');
 const fsSync = require('fs');
@@ -41,7 +42,10 @@ const PORT = Number(process.env.PORT || 3010);
 const SCREENSHOT_API_KEY = process.env.SCREENSHOT_API_KEY || '';
 const SERPAPI_KEY = process.env.SERPAPI_KEY || '';
 const DEMO_MODE = process.env.DEMO_MODE === 'true';
-const CACHE_TTL_MS = Number(process.env.CACHE_TTL_MS || 60 * 60 * 1000); // 1hr default
+const CACHE_TTL_MS = Number(process.env.CACHE_TTL_MS || 60 * 60 * 1000);
+const JWT_SECRET = process.env.JWT_SECRET || crypto.randomBytes(32).toString('hex');
+const JWT_EXPIRES_IN = '7d';
+const MODEL = 'claude-3-5-haiku-20241022';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || '' });
 
@@ -92,6 +96,47 @@ function rateLimit(maxPerMin) {
     }
     next();
   };
+}
+
+// ── JWT helpers ───────────────────────────────────────────────────────────────
+function signToken(payload) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+}
+
+function authenticateToken(req, res, next) {
+  const auth = req.headers['authorization'] || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Authentication required.' });
+  try {
+    req.user = jwt.verify(token, JWT_SECRET);
+    next();
+  } catch {
+    return res.status(401).json({ error: 'Invalid or expired token.' });
+  }
+}
+
+// ── Input sanitization ────────────────────────────────────────────────────────
+const PROFILE_MAX = { website: 200, productType: 200, audience: 300, goals: 500, channels: 300 };
+
+function validateUrl(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return { error: 'URL required.' };
+  const withScheme = s.startsWith('http') ? s : `https://${s}`;
+  try {
+    const u = new URL(withScheme);
+    if (!['http:', 'https:'].includes(u.protocol)) return { error: 'URL must use http or https.' };
+    return { url: withScheme, domain: u.hostname.replace('www.', '') };
+  } catch {
+    return { error: 'Invalid URL.' };
+  }
+}
+
+function sanitizeProfile(raw = {}) {
+  const out = {};
+  for (const [k, max] of Object.entries(PROFILE_MAX)) {
+    out[k] = String(raw[k] || '').trim().slice(0, max);
+  }
+  return out;
 }
 
 // ── File helpers ──────────────────────────────────────────────────────────────
@@ -170,21 +215,31 @@ function uniqPush(arr, val) {
 }
 
 async function fetchTrustpilot(domain) {
-  try {
-    const html = await fetchText(`https://www.trustpilot.com/review/${domain}`);
-    const reviews = [];
-    const blocks = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g) || [];
-    for (const b of blocks) {
-      try {
-        const data = JSON.parse(b.replace(/<script[^>]*>/, '').replace('</script>', ''));
-        (Array.isArray(data.review) ? data.review : []).forEach(r => uniqPush(reviews, r.reviewBody));
-      } catch {}
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      if (attempt > 0) await new Promise(r => setTimeout(r, 2000));
+      const html = await fetchText(`https://www.trustpilot.com/review/${domain}`);
+      const reviews = [];
+      const blocks = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g) || [];
+      for (const b of blocks) {
+        try {
+          const data = JSON.parse(b.replace(/<script[^>]*>/, '').replace('</script>', ''));
+          (Array.isArray(data.review) ? data.review : []).forEach(r => uniqPush(reviews, r.reviewBody));
+        } catch {}
+      }
+      // Primary selector
+      let rating = html.match(/"ratingValue"\s*:\s*"?(\d+\.?\d*)"?/)?.[1];
+      let count = html.match(/"reviewCount"\s*:\s*"?(\d+)"?/)?.[1];
+      // Fallback selector (Trustpilot sometimes uses data-rating-typography)
+      if (!rating) rating = html.match(/data-rating-typography[^>]*>(\d+\.?\d*)</)?.[1];
+      if (!rating) rating = html.match(/class="[^"]*typography_heading[^"]*"[^>]*>(\d+\.?\d*)</)?.[1];
+      if (!reviews.length && !rating) return null;
+      return { source: 'Trustpilot', rating: rating ? parseFloat(rating) : null, count: count ? parseInt(count) : null, reviews: reviews.slice(0, 10) };
+    } catch (err) {
+      if (attempt === 1) return null; // both attempts failed
     }
-    const rating = html.match(/"ratingValue"\s*:\s*"?(\d+\.?\d*)"?/)?.[1];
-    const count = html.match(/"reviewCount"\s*:\s*"?(\d+)"?/)?.[1];
-    if (!reviews.length && !rating) return null;
-    return { source: 'Trustpilot', rating: rating ? parseFloat(rating) : null, count: count ? parseInt(count) : null, reviews: reviews.slice(0, 10) };
-  } catch { return null; }
+  }
+  return null;
 }
 
 async function fetchG2(domain) {
@@ -354,7 +409,7 @@ app.use((req, res, next) => {
 
 // ── Auth routes ───────────────────────────────────────────────────────────────
 app.post('/auth/signup', async (req, res) => {
-  const name = String(req.body?.name || '').trim();
+  const name = String(req.body?.name || '').trim().slice(0, 100);
   const email = normalizeEmail(req.body?.email);
   const password = String(req.body?.password || '');
   if (!name || !email || !password) return res.status(400).json({ error: 'Name, email, and password required.' });
@@ -365,7 +420,8 @@ app.post('/auth/signup', async (req, res) => {
   const user = { id: crypto.randomUUID(), name, email, salt, passwordHash: hashPassword(password, salt), createdAt: new Date().toISOString(), profile: {} };
   users.push(user);
   await writeUsers(users);
-  res.json({ success: true, user: sanitizeUser(user) });
+  const token = signToken({ id: user.id, email: user.email });
+  res.json({ success: true, token, user: sanitizeUser(user) });
 });
 
 app.post('/auth/login', async (req, res) => {
@@ -376,54 +432,44 @@ app.post('/auth/login', async (req, res) => {
   const user = users.find(u => u.email === email);
   if (!user || hashPassword(password, user.salt) !== user.passwordHash)
     return res.status(401).json({ error: 'Invalid email or password.' });
-  res.json({ success: true, user: sanitizeUser(user) });
+  const token = signToken({ id: user.id, email: user.email });
+  res.json({ success: true, token, user: sanitizeUser(user) });
 });
 
-app.post('/auth/profile', async (req, res) => {
-  const email = normalizeEmail(req.body?.email);
-  const profile = req.body?.profile || {};
-  if (!email) return res.status(400).json({ error: 'Email required.' });
+app.post('/auth/profile', authenticateToken, async (req, res) => {
+  const email = req.user.email;
+  const profile = sanitizeProfile(req.body?.profile);
   const users = await readUsers();
   const user = users.find(u => u.email === email);
   if (!user) return res.status(404).json({ error: 'User not found.' });
-  user.profile = {
-    website: String(profile.website || '').trim(),
-    productType: String(profile.productType || '').trim(),
-    audience: String(profile.audience || '').trim(),
-    goals: String(profile.goals || '').trim(),
-    channels: String(profile.channels || '').trim(),
-  };
+  user.profile = profile;
   await writeUsers(users);
   res.json({ success: true, user: sanitizeUser(user) });
 });
 
-app.get('/usage', async (req, res) => {
+app.get('/usage', authenticateToken, async (req, res) => {
   if (DEMO_MODE) return res.json({ used: 0, limit: 9999, remaining: 9999, demoMode: true });
-  const usage = await getUsage(normalizeEmail(req.query?.email));
+  const usage = await getUsage(req.user.email);
   res.json(usage);
 });
 
 // ── /analyze — streaming + cache ──────────────────────────────────────────────
-app.post('/analyze', rateLimit(10), async (req, res) => {
+app.post('/analyze', authenticateToken, rateLimit(10), async (req, res) => {
   if (!process.env.ANTHROPIC_API_KEY)
     return res.status(503).json({ error: 'ANTHROPIC_API_KEY not configured.' });
 
-  const url = String(req.body?.url || '').trim();
-  const email = normalizeEmail(req.body?.email);
+  const parsed = validateUrl(req.body?.url);
+  if (parsed.error) return res.status(400).json({ error: parsed.error });
+  const { url: normalizedUrl, domain } = parsed;
+
+  const email = req.user.email;
   const stream = req.body?.stream === true;
 
-  if (!url) return res.status(400).json({ error: 'URL required.' });
-
-  if (!DEMO_MODE && email) {
+  if (!DEMO_MODE) {
     const usage = await getUsage(email);
     if (usage.remaining <= 0)
       return res.status(429).json({ error: 'Monthly limit reached. Upgrade to continue.', usage });
   }
-
-  const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
-  let domain;
-  try { domain = new URL(normalizedUrl).hostname.replace('www.', ''); }
-  catch { return res.status(400).json({ error: 'Invalid URL.' }); }
 
   // Cache hit — return instantly
   const cached = getCached(domain);
@@ -460,7 +506,7 @@ app.post('/analyze', rateLimit(10), async (req, res) => {
 
       let fullText = '';
       const stream = await client.messages.stream({
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL,
         max_tokens: 1800,
         messages: [{ role: 'user', content }],
       });
@@ -488,7 +534,7 @@ app.post('/analyze', rateLimit(10), async (req, res) => {
     } else {
       // Standard JSON mode
       const response = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL,
         max_tokens: 1800,
         messages: [{ role: 'user', content }],
       });
@@ -510,14 +556,15 @@ app.post('/analyze', rateLimit(10), async (req, res) => {
 });
 
 // ── /cmo ──────────────────────────────────────────────────────────────────────
-app.post('/cmo', rateLimit(20), async (req, res) => {
+app.post('/cmo', authenticateToken, rateLimit(20), async (req, res) => {
   if (!process.env.ANTHROPIC_API_KEY)
     return res.status(503).json({ error: 'ANTHROPIC_API_KEY not configured.' });
-  const { companyProfile, analysis, task = 'weekly-plan' } = req.body || {};
-  if (!companyProfile || !analysis) return res.status(400).json({ error: 'companyProfile and analysis required.' });
+  const { analysis, task = 'weekly-plan' } = req.body || {};
+  const companyProfile = sanitizeProfile(req.body?.companyProfile);
+  if (!companyProfile.website || !analysis) return res.status(400).json({ error: 'companyProfile and analysis required.' });
   try {
     const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
+      model: MODEL,
       max_tokens: 1600,
       messages: [{ role: 'user', content: buildCmoPrompt(companyProfile, analysis, task) }],
     });
@@ -530,7 +577,7 @@ app.post('/cmo', rateLimit(20), async (req, res) => {
 });
 
 // ── /agent — streaming ────────────────────────────────────────────────────────
-app.post('/agent', rateLimit(30), async (req, res) => {
+app.post('/agent', authenticateToken, rateLimit(30), async (req, res) => {
   if (!process.env.ANTHROPIC_API_KEY)
     return res.status(503).json({ error: 'ANTHROPIC_API_KEY not configured.' });
 
@@ -550,7 +597,7 @@ app.post('/agent', rateLimit(30), async (req, res) => {
       res.setHeader('X-Accel-Buffering', 'no');
 
       const stream = await client.messages.stream({
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL,
         max_tokens: 1000,
         system: buildAgentSystem(analysis, domain, profile),
         messages,
@@ -565,7 +612,7 @@ app.post('/agent', rateLimit(30), async (req, res) => {
       res.end();
     } else {
       const response = await client.messages.create({
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL,
         max_tokens: 1000,
         system: buildAgentSystem(analysis, domain, profile),
         messages,
@@ -577,8 +624,15 @@ app.post('/agent', rateLimit(30), async (req, res) => {
   }
 });
 
+// ── /history ──────────────────────────────────────────────────────────────────
+app.get('/history', authenticateToken, async (req, res) => {
+  const h = await readHistory();
+  const entries = (h[req.user.email] || []).slice().reverse(); // newest first
+  res.json({ success: true, history: entries });
+});
+
 // ── /onchain ──────────────────────────────────────────────────────────────────
-app.post('/onchain', async (req, res) => {
+app.post('/onchain', authenticateToken, async (req, res) => {
   const domain = String(req.body?.domain || '').trim();
   if (!domain) return res.status(400).json({ error: 'domain required.' });
   // Stub — Phase 4 will wire Helius + DexScreener

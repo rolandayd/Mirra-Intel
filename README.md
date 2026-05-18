@@ -5,41 +5,69 @@ Mirra analyzes competitor websites, reviews, hiring signals, and news to give fo
 ## Structure
 
 ```
-├── frontend/   → mirra-tester-v2.html (single-file app)
-├── backend/    → Node.js + Express API server
-└── public/     → static assets
+├── index.html        → landing page / frontend entry
+├── server.js         → Node.js + Express API (single file)
+├── mirra-mcp/        → MCP server for AI agent integration
+└── data/             → auto-created: users.json, analysis-history.json
 ```
 
 ## Running locally
 
-**Backend**
 ```bash
-cd backend
 npm install
-# copy .env.example to .env and add your keys
+cp .env.example .env   # fill in your keys
 node server.js
 ```
 
-**Frontend**
-
-Open `frontend/mirra-tester-v2.html` directly in a browser, or serve it via the backend (it's served at `/` by default).
+Open `http://localhost:3010` in your browser.
 
 ## Environment variables
 
-See `backend/.env.example` for required keys:
-- `ANTHROPIC_API_KEY` — required for analysis
-- `SCREENSHOT_API_KEY` — optional (screenshotone.com)
-- `SERPAPI_KEY` — optional (traffic signals)
-- `DEMO_MODE` — set to `true` to bypass usage limits
+See `.env.example` for all keys:
+
+| Variable | Required | Purpose |
+|----------|----------|---------|
+| `ANTHROPIC_API_KEY` | ✅ | AI analysis (claude-3-5-haiku) |
+| `JWT_SECRET` | ✅ | Signs auth tokens — set a random 32-byte hex string |
+| `SCREENSHOT_API_KEY` | Optional | screenshotone.com visual capture |
+| `SERPAPI_KEY` | Optional | Traffic/index signals |
+| `DEMO_MODE` | Optional | `true` bypasses usage limits |
+| `CACHE_TTL_MS` | Optional | Cache TTL in ms (default: 3600000) |
+| `ADMIN_SECRET` | Optional | Protects `POST /cache/clear` |
+
+Generate a JWT secret:
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+## API
+
+All routes except `/status`, `/auth/signup`, and `/auth/login` require a `Authorization: Bearer <token>` header.
+
+| Method | Route | Auth | Purpose |
+|--------|-------|------|---------|
+| GET | `/status` | — | Health check |
+| POST | `/auth/signup` | — | Create account → returns `token` |
+| POST | `/auth/login` | — | Authenticate → returns `token` |
+| POST | `/auth/profile` | ✅ | Save company profile |
+| GET | `/usage` | ✅ | Monthly usage |
+| GET | `/history` | ✅ | Past analyses (newest first) |
+| POST | `/analyze` | ✅ | Core competitor analysis |
+| POST | `/cmo` | ✅ | AI CMO strategy brief |
+| POST | `/agent` | ✅ | Conversational AI advisor |
+| POST | `/onchain` | ✅ | On-chain token intelligence (stub) |
 
 ## Deploying
 
 **Backend → Railway**
 1. Connect this repo to Railway
-2. Set root directory to `backend/`
-3. Add env vars in Railway dashboard
-4. Deploy
+2. Add env vars in Railway dashboard (especially `ANTHROPIC_API_KEY` and `JWT_SECRET`)
+3. Deploy — Railway auto-detects Node via `nixpacks.toml`
 
 **Frontend → Netlify**
-1. Drag and drop `frontend/mirra-tester-v2.html` to Netlify
+1. Drag and drop `index.html` to Netlify
 2. Update `MIRRA_BACKEND_URL` in the HTML to your Railway URL
+
+## MCP (AI Agent Integration)
+
+See `mirra-mcp/SKILL.md` for setup instructions to connect Mirra to Kiro, Claude Code, or Codex.
