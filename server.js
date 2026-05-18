@@ -639,19 +639,83 @@ app.post('/onchain', authenticateToken, async (req, res) => {
   res.json({ success: true, onChainData: { hasOnChainData: false, message: 'On-chain data coming in Phase 4.' } });
 });
 
+// ── Admin middleware ──────────────────────────────────────────────────────────
+function adminAuth(req, res, next) {
+  const secret = req.headers['x-admin-secret'] || req.query.secret;
+  if (!process.env.ADMIN_SECRET) return res.status(503).json({ error: 'ADMIN_SECRET not set.' });
+  if (secret !== process.env.ADMIN_SECRET) return res.status(403).json({ error: 'Forbidden.' });
+  next();
+}
+
+// ── GET /admin/dashboard ──────────────────────────────────────────────────────
+app.get('/admin/dashboard', adminAuth, async (req, res) => {
+  const [users, history] = await Promise.all([readUsers(), readHistory()]);
+  const now = new Date();
+
+  const userStats = users.map(u => {
+    const entries = history[u.email] || [];
+    const thisMonth = entries.filter(e => {
+      const d = new Date(e.analyzedAt);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+    return {
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      createdAt: u.createdAt,
+      totalAnalyses: entries.length,
+      thisMonth: thisMonth.length,
+      lastActive: entries.length ? entries[entries.length - 1].analyzedAt : null,
+      recentDomains: entries.slice(-5).reverse().map(e => e.domain),
+    };
+  });
+
+  // Global stats
+  const allEntries = Object.values(history).flat();
+  const thisMonthAll = allEntries.filter(e => {
+    const d = new Date(e.analyzedAt);
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  });
+  const domainCounts = allEntries.reduce((acc, e) => {
+    acc[e.domain] = (acc[e.domain] || 0) + 1; return acc;
+  }, {});
+  const topDomains = Object.entries(domainCounts)
+    .sort((a, b) => b[1] - a[1]).slice(0, 10)
+    .map(([domain, count]) => ({ domain, count }));
+
+  res.json({
+    overview: {
+      totalUsers: users.length,
+      totalAnalyses: allEntries.length,
+      analysesThisMonth: thisMonthAll.length,
+      activeUsersThisMonth: userStats.filter(u => u.thisMonth > 0).length,
+      cacheSize: analysisCache.size,
+    },
+    topDomains,
+    users: userStats.sort((a, b) => (b.lastActive || '').localeCompare(a.lastActive || '')),
+  });
+});
+
+// ── GET /admin/activity ───────────────────────────────────────────────────────
+app.get('/admin/activity', adminAuth, async (req, res) => {
+  const history = await readHistory();
+  const limit = Math.min(Number(req.query.limit) || 50, 200);
+  const all = Object.entries(history).flatMap(([email, entries]) =>
+    entries.map(e => ({ email, domain: e.domain, analyzedAt: e.analyzedAt }))
+  );
+  all.sort((a, b) => b.analyzedAt.localeCompare(a.analyzedAt));
+  res.json({ activity: all.slice(0, limit) });
+});
+
 // ── /cache/clear — admin utility ──────────────────────────────────────────────
-app.post('/cache/clear', (req, res) => {
-  const secret = req.body?.secret;
-  if (secret !== process.env.ADMIN_SECRET && process.env.ADMIN_SECRET) {
-    return res.status(403).json({ error: 'Forbidden.' });
-  }
+app.post('/cache/clear', adminAuth, (req, res) => {
   analysisCache.clear();
   res.json({ success: true, message: 'Cache cleared.' });
 });
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`Mirra v8 running on port ${PORT}`);
+  console.log(`Mirra v9 running on port ${PORT}`);
   if (DEMO_MODE) console.log('⚡ DEMO MODE — limits bypassed');
   if (SERPAPI_KEY) console.log('✓ SerpApi traffic enabled');
   if (SCREENSHOT_API_KEY) console.log('✓ Screenshot API enabled');
